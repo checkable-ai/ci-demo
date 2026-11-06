@@ -1,6 +1,7 @@
 """Build SES v2 messages from alerts.json and check the recipients before anything is sent."""
 import json
 import os
+import re
 import sys
 
 from .render import render
@@ -28,10 +29,30 @@ def build_message(subject, body):
     }}
 
 
+SUBJECT_MAX = 160
+_PR_SUFFIX = re.compile(r" \(PR #\d+\)$")
+
+
+def one_line_subject(text, limit=SUBJECT_MAX):
+    """Fold the subject onto one line and cut it to `limit`, keeping a trailing " (PR #n)".
+
+    The PR number makes each subject unique, so Gmail does not thread alerts for different pull requests.
+    A long title is cut, never the PR number.
+    """
+    subject = " ".join(text.split())
+    if len(subject) <= limit:
+        return subject
+    m = _PR_SUFFIX.search(subject)
+    if not m:
+        return subject[:limit]
+    tail = m.group(0)
+    return subject[:m.start()][:limit - len(tail)].rstrip() + tail
+
+
 def render_alert(alert, template_dir="templates"):
     ctx = alert["context"]
     with open(os.path.join(template_dir, "email-subject.md"), encoding="utf-8") as f:
-        subject = " ".join(render(f.read(), ctx).split())[:160]
+        subject = one_line_subject(render(f.read(), ctx))
     with open(os.path.join(template_dir, "email-body.md"), encoding="utf-8") as f:
         body = render(f.read(), ctx).strip() + "\n"
     return subject, body

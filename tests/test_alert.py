@@ -77,3 +77,47 @@ def test_subject_is_one_line_and_short():
     a[0]["context"]["title"] = "Line one\nline two " + "x" * 400
     subject, body = alert.render_alert(a[0], TPL)
     assert "\n" not in subject and len(subject) <= 160
+    # a long title is cut, never the PR number
+    assert subject.endswith(" (PR #4)")
+
+
+def _alert_for_pr(number, kind="new"):
+    a = sample_alerts()[0]
+    ctx = dict(a["context"], pr_number=number, pr_url="https://github.test/pull/%d" % number,
+               is_update=(kind == "update"), previous_version=1 if kind == "update" else "")
+    return dict(a, kind=kind, context=ctx)
+
+
+def test_subject_names_the_pull_request_so_gmail_does_not_thread_alerts():
+    # Gmail threads mail with the same subject. Two alerts for two pull requests must never share one.
+    s3, _ = alert.render_alert(_alert_for_pr(3), TPL)
+    s4, _ = alert.render_alert(_alert_for_pr(4), TPL)
+    title = sample_alerts()[0]["context"]["title"]
+    assert s3 == "Checkable: %s (PR #3)" % title
+    assert s4 == "Checkable: %s (PR #4)" % title
+    su, _ = alert.render_alert(_alert_for_pr(4, "update"), TPL)
+    assert su == "Checkable update: %s (PR #4)" % title
+    assert len({s3, s4, su}) == 3
+
+
+def test_nightly_alerts_carry_the_pr_number_into_the_subject():
+    from scripts.checkable import nightly
+    ctx = sample_alerts()[0]["context"]
+    for kind, n in (("new", 3), ("update", 12)):
+        a = nightly._alert(kind, "chg_x", ctx, None, n, "https://github.test/pull/%d" % n, 1)
+        subject, body = alert.render_alert(a, TPL)
+        assert subject.endswith(" (PR #%d)" % n) and ("pull request #%d" % n) in body
+
+
+def test_subject_without_a_pr_number_has_no_empty_suffix():
+    a = sample_alerts()[0]
+    a = dict(a, context=dict(a["context"], pr_number=""))
+    subject, _ = alert.render_alert(a, TPL)
+    assert "PR #" not in subject
+
+
+def test_one_line_subject_keeps_the_suffix_at_the_limit():
+    s = alert.one_line_subject("Checkable: " + "y" * 300 + " (PR #123)")
+    assert len(s) == alert.SUBJECT_MAX and s.endswith("y (PR #123)")
+    assert alert.one_line_subject("short (PR #1)") == "short (PR #1)"
+    assert alert.one_line_subject("z" * 200) == "z" * 160

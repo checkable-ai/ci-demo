@@ -3,9 +3,9 @@
 # The Checkable gate reads this file on every pull request that changes it, matches the vendor and plan
 # against ai-vendor-register.yaml, and waits for a person to sign the change off.
 service: summariser
-register_tool: gemini-api-paid
-vendor: Google
-product: google.gemini-api
-plan: google.gemini-api.paid
+register_tool: openai-api
+vendor: OpenAI
+product: openai.api
+plan: openai.api.platform
 # A placeholder model label for the demo, not a pinned vendor model id.
-model: gemini-flash
+model: gpt-mini

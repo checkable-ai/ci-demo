@@ -11,7 +11,7 @@ Both roles are assumed through GitHub OIDC, so the repo holds no AWS key. They a
 
 ## What `infra/service` makes
 
-- `aws_lambda_function.summariser` (`checkable-ci-demo-summariser`): Python 3.12, arm64, 128 MB, 10 second timeout, reserved concurrency 2. The package is `service/summariser/` zipped as it is (`archive_file`, `__pycache__` left out), so `handler.py` and `model.yaml` ship together.
+- `aws_lambda_function.summariser` (`checkable-ci-demo-summariser`): Python 3.12, arm64, 128 MB, 10 second timeout, no reserved concurrency (`reserved_concurrency = -1`, so the account's concurrency limit caps it). The package is `service/summariser/` zipped as it is (`archive_file`, `__pycache__` left out), so `handler.py` and `model.yaml` ship together.
 - `aws_lambda_function_url.summariser`: auth `NONE`, CORS for `GET` and `POST` from any origin with the `content-type` header.
 - Two `aws_lambda_permission` grants, `lambda:InvokeFunctionUrl` and `lambda:InvokeFunction` (the second only for calls through the URL). Function URLs made since October 2025 need both, and Terraform does not add them.
 - `aws_cloudwatch_log_group.summariser` (`/aws/lambda/checkable-ci-demo-summariser`), 3 day retention, made before the function so Lambda never makes it with no retention. JSON logs with system logs at `WARN`, so the START, END and REPORT lines are not stored.
@@ -49,7 +49,7 @@ The job summary gives the URL, the model, the plan counts, the smoke test result
 
 ## Set-up, in order
 
-Nothing here is applied yet.
+These steps are applied for `checkable-ai/ci-demo`. They are the order for your own copy.
 
 0. Raise the Lambda concurrent executions quota in 726495711127 (Service Quotas, AWS Lambda, Concurrent executions). It was 10 on 6 Nov 2026, and Lambda keeps 10 unreserved, so the reservation of 2 fails until the quota is 12 or more. New accounts are usually raised to 1,000 on request at no charge. Until then, deploy with `reserved_concurrency = -1` (no reservation, the account limit of 10 caps it instead).
 
@@ -57,7 +57,7 @@ Nothing here is applied yet.
 2. Apply the roles stack (site repo, `infra/aws/github-oidc-ses`) with `-var github_repo_id=<id>`. It makes the plan and deploy roles and the permissions boundary.
 3. Apply the state bucket policy (site repo, `infra/aws/bootstrap`). It names the two roles, so it goes after step 2.
 4. In this repo, set the variables `TF_STATE_BUCKET` (bootstrap output `state_bucket`), `TF_PLAN_ROLE_ARN` and `TF_DEPLOY_ROLE_ARN` (roles stack outputs).
-5. Create the `production` environment and limit its deployment branches to `main`. Required reviewers on it are optional: the deploy gate already needs the Checkable sign-off.
+5. Create the `production` environment and limit its deployment branches to `main`. In `checkable-ai/ci-demo` it requires a reviewer from `@checkable-ai/reviewers`, a second hold after the Checkable sign-off that the deploy gate checks.
 6. Add `terraform/plan` to the ruleset's required checks.
 7. Merge a signed-off pull request that touches `service/` or `infra/service/`, or run Deploy from the Actions tab on `main`.
 
@@ -82,4 +82,4 @@ About A$0.00 a month: everything sits inside the AWS always-free allowances (Lam
 
 There is no NAT gateway, cluster or always-on compute. The function costs nothing while nobody calls it.
 
-The URL is public with no auth, so a flood is the one way past the A$5 a month cap. Reserved concurrency 2 limits how fast it can be called, and system logs at `WARN` keep log ingestion near zero, but request charges still grow with traffic. Set `reserved_concurrency` to 0 to stop every call, or remove the URL, if that ever happens. The organisation's budget brake does not stop calls to a function that already exists.
+The URL is public with no auth, so a flood is the one way past the A$5 a month cap. The account's concurrency limit caps how fast it can be called, and system logs at `WARN` keep log ingestion near zero, but request charges still grow with traffic. Set `reserved_concurrency` to 0 to stop every call, or remove the URL, if that ever happens. The organisation's budget brake does not stop calls to a function that already exists.

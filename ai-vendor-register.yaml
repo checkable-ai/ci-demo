@@ -56,4 +56,12 @@ tools:
     status: in use
     # The service code is in service/summariser/. Its AI vendor and plan are in model.yaml, which the gate also checks.
     config: service/summariser/model.yaml
+  - id: openai-api
+    name: OpenAI API
+    vendor: OpenAI
+    product: openai.api
+    plan: openai.api.platform
+    account_type: business
+    used_by: Summariser service
+    status: in use
 vendor_changes: []

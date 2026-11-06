@@ -1,0 +1,96 @@
+name: Kubernetes policy
+
+# The required `k8s/policy` check (flow 4). It reads the manifests under k8s/, applies them to a throwaway kind
+# cluster on the runner, waits for the rollout, then reads what the cluster holds (kubectl get -o yaml) and
+# checks both against ai-vendor-register.yaml with scripts/checkable/k8s_policy.py. An AI model endpoint, vendor
+# host or model-serving image that the register does not list fails the check. Open vendor changes that reach a
+# registered entry are listed in the job summary, and the checkable/sign-off status handles the sign-off.
+#
+# It runs on every pull request with no path filter, so a required check never waits for a run that will not
+# come. The scope step decides whether this pull request touches k8s/ or the register: if not, the job passes in
+# seconds without starting a cluster. Runs on GitHub-hosted runners only: free, no cloud cluster, no secrets,
+# read-only token. Fork pull requests run the same way. Run it by hand with the workflow_dispatch button.
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: k8s-policy-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  policy:
+    name: k8s/policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      FEED_URL: ${{ vars.FEED_URL }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Scope
+        id: scope
+        run: |
+          run=true
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            # On a pull request, HEAD is the merge commit and HEAD^1 is the base branch tip.
+            changed="$(git diff --name-only HEAD^1 HEAD)"
+            if ! printf '%s\n' "$changed" | grep -Eq '^(k8s/|ai-vendor-register\.yaml$|scripts/checkable/(k8s_policy|services|register|match|feed)\.py$|\.github/workflows/k8s-policy\.yml$|feed-snapshot/)'; then
+              run=false
+            fi
+          fi
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+          if [ "$run" = "false" ]; then
+            {
+              echo "## Kubernetes policy"
+              echo ""
+              echo "**Passed: this pull request changes nothing under \`k8s/\` and not the register or its feed.** No cluster was started."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - if: steps.scope.outputs.run == 'true'
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - if: steps.scope.outputs.run == 'true'
+        run: pip install -r scripts/requirements.txt
+
+      # Stop here, before anything is deployed, if the manifests use an AI model the register does not list.
+      - name: Policy check on the files
+        if: steps.scope.outputs.run == 'true'
+        run: python -m scripts.checkable.k8s_policy --heading "Kubernetes policy, files in k8s/" k8s
+
+      - name: Start a kind cluster
+        if: steps.scope.outputs.run == 'true'
+        uses: helm/kind-action@ea822c7bf1874f08e5a491df991c228edffc3376 # v1.15.2
+        with:
+          cluster_name: k8s-policy
+          wait: 120s
+
+      - name: Apply the manifests and wait for the rollout
+        if: steps.scope.outputs.run == 'true'
+        run: |
+          kubectl apply -f k8s/
+          kubectl -n summariser rollout status deployment/summariser --timeout=180s
+
+      - name: Read the live cluster
+        if: steps.scope.outputs.run == 'true'
+        run: kubectl -n summariser get all,configmaps -o yaml > "$RUNNER_TEMP/live.yaml"
+
+      - name: Policy check on the live cluster
+        if: steps.scope.outputs.run == 'true'
+        run: python -m scripts.checkable.k8s_policy --heading "Kubernetes policy, live kind cluster" "$RUNNER_TEMP/live.yaml"
+
+      - name: Cluster state for debugging
+        if: failure() && steps.scope.outputs.run == 'true'
+        run: |
+          kubectl get all,configmaps -A || true
+          kubectl -n summariser describe deployment summariser || true
+          kubectl -n summariser logs deployment/summariser --tail=50 || true

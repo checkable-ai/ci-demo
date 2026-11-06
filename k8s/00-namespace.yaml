@@ -1,0 +1,9 @@
+# Kubernetes manifests for the summariser of Example Bay Advisory, a fictional sample company.
+# They exist so the k8s/policy check has something real to apply to a throwaway kind cluster on the CI runner.
+# Nothing here is deployed anywhere else, and the container is a public placeholder that makes no AI call.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: summariser
+  labels:
+    pod-security.kubernetes.io/enforce: baseline

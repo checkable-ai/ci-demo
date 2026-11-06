@@ -16,10 +16,10 @@ Everything runs on GitHub-hosted runners. There is no server to host and no API 
 |---|---|---|
 | 1. Nightly check | `.github/workflows/checkable-nightly.yml` | Reads the feed, opens one pull request per vendor change that reaches the register, emails the alert |
 | 2. Pull request gate | `.github/workflows/checkable-gate.yml`, `.github/workflows/checkable-sign-off.yml` | Checks register, model config and Kubernetes changes, posts one comment, holds `checkable/sign-off` red until a person signs off |
-| 3. CI/CD to AWS | `.github/workflows/deploy.yml`, `infra/` | Plans and deploys the summariser service to AWS Lambda in `ap-southeast-2`, with `terraform/plan` on every pull request |
-| 4. Kubernetes | `k8s/` | Manifests for the summariser, checked by `k8s/policy` and read by the gate for AI model use |
+| 3. CI/CD to AWS | `.github/workflows/terraform-plan.yml`, `.github/workflows/deploy.yml`, `infra/` | Plans and deploys the summariser service to AWS Lambda in `ap-southeast-2`, with `terraform/plan` on every pull request |
+| 4. Kubernetes | `.github/workflows/k8s-policy.yml`, `k8s/` | Manifests for the summariser, checked by `k8s/policy` and read by the gate for AI model use |
 
-Flows 3 and 4 live at reserved paths, `.github/workflows/deploy.yml`, `infra/` and `k8s/`, and every change to them passes the same gate as any other pull request.
+Flows 3 and 4 live at reserved paths, `.github/workflows/deploy.yml`, `infra/` and `k8s/`, and every change to them passes the same gate as any other pull request. A pull request that changes `service/` or `infra/` needs a person's sign-off even when no AI tool changed, because those files deploy to production.
 
 ### Flow 1: the nightly check
 
@@ -99,8 +99,8 @@ Tell us what you have, and we'll help with the rest, through the enquiry form at
 |---|---|---|
 | `tests` | `tests.yml`, job `tests` | Check run |
 | `checkable/sign-off` | `checkable-gate.yml` and `checkable-sign-off.yml` (and the nightly check on its own pull requests) | Commit status |
-| `terraform/plan` | `deploy.yml` (flow 3) | Check run |
-| `k8s/policy` | the Kubernetes policy workflow (flow 4) | Check run |
+| `terraform/plan` | `terraform-plan.yml`, job `terraform/plan` (flow 3) | Check run |
+| `k8s/policy` | `k8s-policy.yml`, job `k8s/policy` (flow 4) | Check run |
 
 A required check has to report on every pull request, or the pull request waits for it forever. `tests` and `checkable/sign-off` run with no path filter for that reason, and the flow 3 and 4 checks follow the same rule. Add `terraform/plan` and `k8s/policy` to the ruleset in the same change that adds their workflows.
 

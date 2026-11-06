@@ -19,7 +19,7 @@ Both roles are assumed through GitHub OIDC, so the repo holds no AWS key. They a
 
 Every resource carries `Project = checkable-ci-demo` through the provider's default tags. The provider refuses any account other than 726495711127. Output: `function_url`.
 
-State: S3 backend, key `checkable-ai/ci-demo/service.tfstate`, `use_lockfile = true` (Terraform 1.10 or later, no DynamoDB table). The bucket is not in the code: CI passes it with `-backend-config="bucket=$TF_STATE_BUCKET"` from the repo variable. It is the existing Checkable AI state bucket, `checkable-ai-tfstate-717954158174`, in the management account. Its bucket policy grants the two CI roles this one key and its lock file.
+State: S3 backend, key `checkable-ai/ci-demo/service.tfstate`, `use_lockfile = true` (Terraform 1.10 or later, no DynamoDB table). The bucket is not in the code: CI passes it with `-backend-config="bucket=$TF_STATE_BUCKET"` from the repo variable. It is the existing Checkable AI state bucket in the management account, named in the private infrastructure repo. Its bucket policy grants the two CI roles this one key and its lock file.
 
 ## `terraform/plan`
 
@@ -35,7 +35,7 @@ No sign-off, no deploy. `checkable/deploy-gate` runs `scripts/checkable/deploy_g
 
 1. It finds the one merged pull request into `main` whose merge commit is the commit being deployed (`GET /repos/{repo}/commits/{sha}/pulls`). A direct push has none and is blocked.
 2. It reads the newest `checkable/sign-off` status on that pull request's head commit. It must be `success` and posted by the gate's bot (`github-actions[bot]`, or the org App login in `CHECKABLE_BOT_LOGINS`). A status from anyone else, or a newer status in another state, blocks the deploy.
-3. A "Signed off by" status also needs the gate comment's marker to record a sign-off of that exact head commit. "No AI tools changed" needs no sign-off, the same rule as the gate.
+3. A "Signed off by" status also needs the gate comment's marker to record a sign-off of that exact head commit. "No AI tools changed" needs no sign-off, the same rule as the gate. The gate gives that status only when a pull request leaves `service/` and `infra/` alone, so every change this workflow deploys was signed off by a person.
 
 Any API error blocks the deploy too.
 
@@ -56,14 +56,14 @@ Nothing here is applied yet.
 1. Create `checkable-ai/ci-demo` and read its id: `gh api repos/checkable-ai/ci-demo --jq .id`.
 2. Apply the roles stack (site repo, `infra/aws/github-oidc-ses`) with `-var github_repo_id=<id>`. It makes the plan and deploy roles and the permissions boundary.
 3. Apply the state bucket policy (site repo, `infra/aws/bootstrap`). It names the two roles, so it goes after step 2.
-4. In this repo, set the variables `TF_STATE_BUCKET` (`checkable-ai-tfstate-717954158174`), `TF_PLAN_ROLE_ARN` and `TF_DEPLOY_ROLE_ARN` (roles stack outputs).
+4. In this repo, set the variables `TF_STATE_BUCKET` (bootstrap output `state_bucket`), `TF_PLAN_ROLE_ARN` and `TF_DEPLOY_ROLE_ARN` (roles stack outputs).
 5. Create the `production` environment and limit its deployment branches to `main`. Required reviewers on it are optional: the deploy gate already needs the Checkable sign-off.
 6. Add `terraform/plan` to the ruleset's required checks.
 7. Merge a signed-off pull request that touches `service/` or `infra/service/`, or run Deploy from the Actions tab on `main`.
 
 A local run from the management account's admin session assumes `OrganizationAccountAccessRole` in the member account:
 
-    terraform -chdir=infra/service init -backend-config="bucket=checkable-ai-tfstate-717954158174"
+    terraform -chdir=infra/service init -backend-config="bucket=<state bucket>"
     AWS_PROFILE=checkable-admin terraform -chdir=infra/service plan -var assume_role_arn=arn:aws:iam::726495711127:role/OrganizationAccountAccessRole
 
 ## Cost at demo traffic

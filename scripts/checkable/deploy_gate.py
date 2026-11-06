@@ -8,7 +8,8 @@ pull request's head commit, with the same constants and helpers the gate uses (g
 2. The newest `checkable/sign-off` status on its head commit is `success`, posted by the Actions bot or the org's
    App (CHECKABLE_BOT_LOGINS). A status from anyone else, or a newer status in any other state, stops the deploy.
 3. A "Signed off by" status also needs the gate's sticky comment, from the same bots, to record a sign-off of that
-   exact head commit. "No AI tools changed" needs no sign-off, as in the gate.
+   exact head commit. "No AI tools changed" needs no sign-off, as in the gate, which gives that status only
+   when a pull request leaves service/ and infra/ (everything this workflow deploys) alone.
 
 Anything else, an API error included, fails closed.
 """

@@ -1,0 +1,16 @@
+# The AI model the summariser is configured for. The k8s/policy check and the Checkable gate both read these
+# keys and match them to ai-vendor-register.yaml. Change the vendor, plan, model or endpoint in a pull request
+# and the check tells you whether the register still lists it.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: summariser-model
+  namespace: summariser
+  labels:
+    app.kubernetes.io/name: summariser
+data:
+  MODEL_ENDPOINT: "https://generativelanguage.googleapis.com/"
+  CHECKABLE_AI_VENDOR: "Google"
+  CHECKABLE_AI_PRODUCT: "google.gemini-api"
+  CHECKABLE_AI_PLAN: "google.gemini-api.paid"
+  CHECKABLE_AI_MODEL: "gemini-flash"

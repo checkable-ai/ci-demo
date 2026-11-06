@@ -9,17 +9,19 @@ name: Terraform plan
 # plan role through GitHub OIDC (read only, plus the state lock file), runs terraform plan for infra/service, and
 # posts the plan as one sticky comment and as the job summary. A plan that fails turns the check red.
 #
-# Pull requests from forks get no OIDC token, so they end green with a note: a maintainer brings the change onto a
-# branch in this repo, as for the Checkable gate.
+# Pull requests from forks, and Dependabot runs, get no OIDC token, so they end green with a note: a maintainer
+# brings the change onto a branch in this repo, as for the Checkable gate.
 on:
   pull_request:
 
 permissions:
   contents: read
 
+# Not cancelled midway: a plan holds the same state lock file as a production deploy, and a cancelled run could
+# leave it behind. GitHub keeps only the newest waiting run per pull request.
 concurrency:
   group: terraform-plan-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 # shell: bash runs every step with -eo pipefail, so a failed plan piped into tee still fails the step.
 defaults:
@@ -53,6 +55,7 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          ACTOR: ${{ github.actor }}
         run: |
           changed="$(git diff --name-only "$BASE_SHA...$HEAD_SHA" \
             | grep -E '^(infra/|service/|\.github/workflows/(terraform-plan|deploy)\.yml$)' || true)"
@@ -62,6 +65,9 @@ jobs:
           elif [ "$HEAD_REPO" != "$GITHUB_REPOSITORY" ]; then
             echo "run=false" >> "$GITHUB_OUTPUT"
             reason="Fork pull request: no plan, forks get no AWS credentials. A maintainer brings the change onto a branch in this repo."
+          elif [ "$ACTOR" = "dependabot[bot]" ]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            reason="Dependabot pull request: no plan, its runs get no OIDC token. The gate treats it like a fork, and so does this check."
           else
             echo "run=true" >> "$GITHUB_OUTPUT"
             reason=""

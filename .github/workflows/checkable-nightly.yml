@@ -1,0 +1,132 @@
+name: Checkable nightly check
+
+# Reads the Checkable feed, opens one pull request per vendor change that reaches a tool
+# in ai-vendor-register.yaml, and emails the same alert through Amazon SES.
+# 21:00 UTC is 8am AEDT, after the 6am refresh. Schedules run on the default branch only.
+#
+# Pull requests are opened with a token from the org's GitHub App ("Checkable AI"), so the tests and
+# sign-off workflows run on them like on any pull request. Without the App secrets the job falls back to
+# GITHUB_TOKEN, and GitHub then starts no workflow on the pull requests it opens.
+on:
+  schedule:
+    - cron: "0 21 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Match and print only. No pull request and no email."
+        type: boolean
+        default: false
+
+concurrency:
+  group: checkable-nightly
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      issues: write  # creates the two labels when they are missing
+      pull-requests: write
+      statuses: write
+    outputs:
+      has_alerts: ${{ steps.nightly.outputs.has_alerts }}
+    steps:
+      - id: app
+        name: Check for the Checkable AI App secrets
+        # Secrets cannot appear in an `if:`, so this step turns their presence into an output.
+        env:
+          APP_ID: ${{ secrets.CHECKABLE_APP_ID }}
+          APP_KEY: ${{ secrets.CHECKABLE_APP_PRIVATE_KEY }}
+        run: |
+          if [ -n "$APP_ID" ] && [ -n "$APP_KEY" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::CHECKABLE_APP_ID or CHECKABLE_APP_PRIVATE_KEY is not set. Pull requests fall back to GITHUB_TOKEN and their workflows will not start."
+          fi
+      - id: app-token
+        if: steps.app.outputs.present == 'true'
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ secrets.CHECKABLE_APP_ID }}
+          private-key: ${{ secrets.CHECKABLE_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+          permission-issues: write
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - run: pip install -r scripts/requirements.txt
+      - id: nightly
+        env:
+          # Comments, labels and the checkable/sign-off status. Same author as the gate workflows.
+          GITHUB_TOKEN: ${{ github.token }}
+          # git push and gh pr create or edit. Empty when the App secrets are absent.
+          CHECKABLE_PR_TOKEN: ${{ steps.app-token.outputs.token }}
+          CHECKABLE_BOT_LOGINS: ${{ steps.app-token.outputs.app-slug && format('{0}[bot]', steps.app-token.outputs.app-slug) || '' }}
+          FEED_URL: ${{ vars.FEED_URL }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: python -m scripts.checkable.nightly
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        # always(): the nightly step exits 1 when one change failed, and PRs it opened still get their email
+        if: ${{ always() && steps.nightly.outputs.has_alerts == 'true' }}
+        with:
+          name: alerts
+          path: alerts.json
+          retention-days: 1
+
+  alert:
+    needs: sync
+    if: ${{ !cancelled() && needs.sync.outputs.has_alerts == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      ALERT_TO: ${{ vars.ALERT_TO || 'hello+feed-test@checkableai.com' }}
+      ALERT_FROM: ${{ vars.ALERT_FROM || 'feed@checkableai.com' }}
+      # The secret wins. In checkable-ai/ci-demo itself the demo role is the default, so email works with no
+      # setup there. A copy of this repository sends nothing until it sets its own AWS_ROLE_ARN.
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN || (github.repository == 'checkable-ai/ci-demo' && 'arn:aws:iam::726495711127:role/checkable-ci-demo-ses' || '') }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - run: pip install -r scripts/requirements.txt
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: alerts
+      - id: render
+        run: python -m scripts.checkable.alert
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        if: steps.render.outputs.send == 'true'
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || 'ap-southeast-2' }}
+          role-session-name: checkable-ci-demo-${{ github.run_id }}
+          mask-aws-account-id: true
+      - name: Send
+        if: steps.render.outputs.send == 'true'
+        run: |
+          sent=0
+          for f in alert-*.json; do
+            aws sesv2 send-email \
+              --from-email-address "$ALERT_FROM" \
+              --destination "ToAddresses=$ALERT_TO" \
+              --content "file://$f"
+            sent=$((sent + 1))
+            sleep 1
+          done
+          echo "Sent $sent email(s) through Amazon SES in ${{ vars.AWS_REGION || 'ap-southeast-2' }}." >> "$GITHUB_STEP_SUMMARY"

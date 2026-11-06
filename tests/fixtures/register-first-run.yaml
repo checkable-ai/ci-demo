@@ -1,0 +1,57 @@
+# AI vendor register for Example Bay Advisory, a fictional sample company.
+# Every name, team and number in this file is made up for the Checkable AI CI demo.
+# Add or change a tool in a pull request. The Checkable gate looks it up in the feed and waits for a person to sign it off.
+organisation: Example Bay Advisory
+fictional: true
+operates_in: [AU, EU, US]
+last_checked: 2026-11-06
+tools:
+  - id: claude-team
+    name: Claude Team
+    vendor: Anthropic
+    product: anthropic.claude
+    plan: anthropic.claude.team
+    account_type: business
+    used_by: Advisory staff, 12 seats
+    status: in use
+  - id: chatgpt-plus-research
+    name: ChatGPT Plus
+    vendor: OpenAI
+    product: openai.chatgpt
+    plan: openai.chatgpt.plus
+    account_type: personal
+    used_by: Research lead, one personal seat paid by the firm
+    status: in use
+  - id: copilot-business
+    name: GitHub Copilot Business
+    vendor: GitHub
+    product: github.copilot
+    plan: github.copilot.business
+    account_type: business
+    used_by: Two developers
+    status: in use
+  - id: gemini-api-paid
+    name: Gemini API (paid tier)
+    vendor: Google
+    product: google.gemini-api
+    plan: google.gemini-api.paid
+    account_type: business
+    used_by: Client report drafting tool
+    status: in use
+  - id: m365-copilot
+    name: Microsoft 365 Copilot
+    vendor: Microsoft
+    product: microsoft.m365-copilot
+    plan: microsoft.m365-copilot.commercial
+    account_type: business
+    used_by: Office staff, 20 seats
+    status: in use
+  - id: inhouse-summariser
+    name: Meeting notes summariser, built in-house
+    vendor: null
+    product: null
+    plan: null
+    account_type: internal
+    used_by: Partners
+    status: in use
+vendor_changes: []

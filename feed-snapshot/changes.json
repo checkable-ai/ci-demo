@@ -1,0 +1,1149 @@
+{
+  "schema": "urn:checkable:feed:demo-changes:1.1.0",
+  "feed_id": "checkable-demo",
+  "feed_version": "2026-11-06.4",
+  "generated_at": "2026-11-06T04:26:54Z",
+  "publisher": {
+    "name": "Checkable AI",
+    "url": "https://checkableai.com/"
+  },
+  "terms": {
+    "url": "https://checkableai.com/terms/",
+    "text": "Checkable AI's text in this feed is covered by our terms. Vendor quotes stay under their own licence, named on each quote."
+  },
+  "notice": "A demo feed for the Checkable AI CI demo. Vendor quotes appear only where the source's licence allows them. Everything else is Checkable AI's reading, linked to the source.",
+  "plans": [
+    {
+      "id": "anthropic.claude.team",
+      "vendor": {
+        "id": "anthropic",
+        "name": "Anthropic"
+      },
+      "product": {
+        "id": "anthropic.claude",
+        "name": "Claude"
+      },
+      "name": "Claude Team",
+      "terms": [
+        {
+          "title": "Anthropic Commercial Terms of Service",
+          "url": "https://www.anthropic.com/legal/commercial-terms"
+        },
+        {
+          "title": "Anthropic Privacy Policy",
+          "url": "https://www.anthropic.com/legal/privacy"
+        }
+      ],
+      "rules": {
+        "au": [
+          {
+            "code": "PA1988",
+            "name": "Privacy Act 1988 (Cth)",
+            "why": "The Privacy Act applies to personal information the business sends to the tool."
+          },
+          {
+            "code": "APPs",
+            "name": "Australian Privacy Principles (incl. APP 11 security of personal information)",
+            "why": "APP 8 and APP 11 cover sending personal information to an overseas tool and keeping it secure."
+          },
+          {
+            "code": "OAIC-AI-USE",
+            "name": "OAIC Guidance on privacy and the use of commercially available AI products",
+            "why": "The privacy regulator expects a privacy check before staff use a commercial AI product with personal information."
+          }
+        ],
+        "eu": [
+          {
+            "code": "EU-GDPR",
+            "name": "General Data Protection Regulation as applied to AI",
+            "why": "Work for EU clients puts the vendor in the role of processor for their personal data."
+          },
+          {
+            "code": "EU-AIA",
+            "name": "Regulation (EU) 2024/1689, Artificial Intelligence Act",
+            "why": "The EU AI Act sets duties for deployers of AI systems used for EU clients."
+          }
+        ],
+        "us": [
+          {
+            "code": "US-FTC-S5-AI",
+            "name": "FTC Act Section 5 enforcement against AI practices (Operation AI Comply, Rite Aid order, Rytr set-aside)",
+            "why": "What the business tells US clients about how it uses AI and handles their data must be true."
+          },
+          {
+            "code": "US-NIST-AI-RMF",
+            "name": "NIST AI Risk Management Framework (AI RMF 1.0, NIST AI 100-1)",
+            "why": "US clients often ask for AI risk management in line with the NIST AI Risk Management Framework."
+          }
+        ]
+      },
+      "rules_reading": "Checkable AI's reading of why AU, EU and US rules reach a business that puts client information into Claude Team.",
+      "review": {
+        "status": "auto_needs_review",
+        "reviewed_at": null
+      }
+    },
+    {
+      "id": "anthropic.claude.pro",
+      "vendor": {
+        "id": "anthropic",
+        "name": "Anthropic"
+      },
+      "product": {
+        "id": "anthropic.claude",
+        "name": "Claude"
+      },
+      "name": "Claude Pro",
+      "terms": [
+        {
+          "title": "Anthropic Consumer Terms of Service",
+          "url": "https://www.anthropic.com/legal/consumer-terms"
+        },
+        {
+          "title": "Anthropic Privacy Policy",
+          "url": "https://www.anthropic.com/legal/privacy"
+        }
+      ],
+      "rules": {
+        "au": [
+          {
+            "code": "PA1988",
+            "name": "Privacy Act 1988 (Cth)",
+            "why": "The Privacy Act applies to personal information the business sends to the tool."
+          },
+          {
+            "code": "APPs",
+            "name": "Australian Privacy Principles (incl. APP 11 security of personal information)",
+            "why": "APP 8 and APP 11 cover sending personal information to an overseas tool and keeping it secure."
+          },
+          {
+            "code": "OAIC-AI-USE",
+            "name": "OAIC Guidance on privacy and the use of commercially available AI products",
+            "why": "The privacy regulator expects a privacy check before staff use a commercial AI product with personal information."
+          }
+        ],
+        "eu": [
+          {
+            "code": "EU-GDPR",
+            "name": "General Data Protection Regulation as applied to AI",
+            "why": "Work for EU clients puts the vendor in the role of processor for their personal data."
+          },
+          {
+            "code": "EU-AIA",
+            "name": "Regulation (EU) 2024/1689, Artificial Intelligence Act",
+            "why": "The EU AI Act sets duties for deployers of AI systems used for EU clients."
+          }
+        ],
+        "us": [
+          {
+            "code": "US-FTC-S5-AI",
+            "name": "FTC Act Section 5 enforcement against AI practices (Operation AI Comply, Rite Aid order, Rytr set-aside)",
+            "why": "What the business tells US clients about how it uses AI and handles their data must be true."
+          },
+          {
+            "code": "US-CA-CCPA-ADMT",
+            "name": "CCPA regulations on automated decisionmaking technology, risk assessments and cybersecurity audits",
+            "why": "California privacy rules on automated decisions can reach US consumer data handled with AI."
+          }
+        ]
+      },
+      "rules_reading": "Checkable AI's reading of why AU, EU and US rules reach a business whose staff use a personal Claude Pro account for work.",
+      "review": {
+        "status": "auto_needs_review",
+        "reviewed_at": null
+      }
+    },
+    {
+      "id": "openai.chatgpt.plus",
+      "vendor": {
+        "id": "openai",
+        "name": "OpenAI"
+      },
+      "product": {
+        "id": "openai.chatgpt",
+        "name": "ChatGPT"
+      },
+      "name": "ChatGPT Plus",
+      "terms": [
+        {
+          "title": "OpenAI Terms of Use",
+          "url": "https://openai.com/policies/terms-of-use/"
+        },
+        {
+          "title": "OpenAI Privacy Policy",
+          "url": "https://openai.com/policies/privacy-policy/"
+        }
+      ],
+      "rules": {
+        "au": [
+          {
+            "code": "PA1988",
+            "name": "Privacy Act 1988 (Cth)",
+            "why": "The Privacy Act applies to personal information the business sends to the tool."
+          },
+          {
+            "code": "APPs",
+            "name": "Australian Privacy Principles (incl. APP 11 security of personal information)",
+            "why": "APP 8 and APP 11 cover sending personal information to an overseas tool and keeping it secure."
+          },
+          {
+            "code": "OAIC-AI-USE",
+            "name": "OAIC Guidance on privacy and the use of commercially available AI products",
+            "why": "The privacy regulator expects a privacy check before staff use a commercial AI product with personal information."
+          }
+        ],
+        "eu": [
+          {
+            "code": "EU-GDPR",
+            "name": "General Data Protection Regulation as applied to AI",
+            "why": "Work for EU clients puts the vendor in the role of processor for their personal data."
+          },
+          {
+            "code": "EU-AIA",
+            "name": "Regulation (EU) 2024/1689, Artificial Intelligence Act",
+            "why": "The EU AI Act sets duties for deployers of AI systems used for EU clients."
+          }
+        ],
+        "us": [
+          {
+            "code": "US-FTC-S5-AI",
+            "name": "FTC Act Section 5 enforcement against AI practices (Operation AI Comply, Rite Aid order, Rytr set-aside)",
+            "why": "What the business tells US clients about how it uses AI and handles their data must be true."
+          },
+          {
+            "code": "US-CA-CCPA-ADMT",
+            "name": "CCPA regulations on automated decisionmaking technology, risk assessments and cybersecurity audits",
+            "why": "California privacy rules on automated decisions can reach US consumer data handled with AI."
+          }
+        ]
+      },
+      "rules_reading": "Checkable AI's reading of why AU, EU and US rules reach a business whose staff use a personal ChatGPT Plus account for work.",
+      "review": {
+        "status": "auto_needs_review",
+        "reviewed_at": null
+      }
+    },
+    {
+      "id": "openai.api.platform",
+      "vendor": {
+        "id": "openai",
+        "name": "OpenAI"
+      },
+      "product": {
+        "id": "openai.api",
+        "name": "OpenAI API"
+      },
+      "name": "OpenAI API",
+      "terms": [
+        {
+          "title": "OpenAI Services Agreement and Service Terms",
+          "url": "https://openai.com/policies/service-terms/"
+        },
+        {
+          "title": "OpenAI Enterprise privacy",
+          "url": "https://openai.com/enterprise-privacy/"
+        }
+      ],
+      "rules": {
+        "au": [
+          {
+            "code": "PA1988",
+            "name": "Privacy Act 1988 (Cth)",
+            "why": "The Privacy Act applies to personal information the business sends to the tool."
+          },
+          {
+            "code": "APPs",
+            "name": "Australian Privacy Principles (incl. APP 11 security of personal information)",
+            "why": "APP 8 and APP 11 cover sending personal information to an overseas tool and keeping it secure."
+          },
+          {
+            "code": "OAIC-AI",
+            "name": "OAIC guidance on privacy and AI (commercially available AI products, and developing and training generative AI models)",
+            "why": "The privacy regulator's AI guidance covers personal information put into AI products through an API."
+          }
+        ],
+        "eu": [
+          {
+            "code": "EU-GDPR",
+            "name": "General Data Protection Regulation as applied to AI",
+            "why": "Work for EU clients puts the vendor in the role of processor for their personal data."
+          },
+          {
+            "code": "EU-SCC-2021-914",
+            "name": "Standard contractual clauses for transfers to third countries",
+            "why": "Sending EU personal data to a vendor outside the EU needs a transfer tool such as standard contractual clauses."
+          },
+          {
+            "code": "EU-AIA",
+            "name": "Regulation (EU) 2024/1689, Artificial Intelligence Act",
+            "why": "The EU AI Act sets duties for deployers of AI systems used for EU clients."
+          }
+        ],
+        "us": [
+          {
+            "code": "US-FTC-S5-AI",
+            "name": "FTC Act Section 5 enforcement against AI practices (Operation AI Comply, Rite Aid order, Rytr set-aside)",
+            "why": "What the business tells US clients about how it uses AI and handles their data must be true."
+          },
+          {
+            "code": "US-NIST-AI-RMF",
+            "name": "NIST AI Risk Management Framework (AI RMF 1.0, NIST AI 100-1)",
+            "why": "US clients often ask for AI risk management in line with the NIST AI Risk Management Framework."
+          }
+        ]
+      },
+      "rules_reading": "Checkable AI's reading of why AU, EU and US rules reach a business that sends client data to the OpenAI API.",
+      "review": {
+        "status": "auto_needs_review",
+        "reviewed_at": null
+      }
+    },
+    {
+      "id": "github.copilot.business",
+      "vendor": {
+        "id": "github",
+        "name": "GitHub"
+      },
+      "product": {
+        "id": "github.copilot",
+        "name": "GitHub Copilot"
+      },
+      "name": "GitHub Copilot Business",
+      "terms": [
+        {
+          "title": "GitHub Customer Agreement",
+          "url": "https://github.com/customer-terms"
+        },
+        {
+          "title": "GitHub Copilot product specific terms",
+          "url": "https://github.com/customer-terms/github-copilot-product-specific-terms"
+        }
+      ],
+      "rules": {
+        "au": [
+          {
+            "code": "APPs",
+            "name": "Australian Privacy Principles (incl. APP 11 security of personal information)",
+            "why": "APP 8 and APP 11 cover sending personal information to an overseas tool and keeping it secure."
+          },
+          {
+            "code": "ISM",
+            "name": "Information Security Manual",
+            "why": "Government clients may ask for controls in line with the Information Security Manual."
+          },
+          {
+            "code": "E8MM",
+            "name": "Essential Eight Maturity Model",
+            "why": "Government and defence clients may ask for Essential Eight maturity across developer tools."
+          }
+        ],
+        "eu": [
+          {
+            "code": "EU-GDPR",
+            "name": "General Data Protection Regulation as applied to AI",
+            "why": "Work for EU clients puts the vendor in the role of processor for their personal data."
+          },
+          {
+            "code": "EU-AIA",
+            "name": "Regulation (EU) 2024/1689, Artificial Intelligence Act",
+            "why": "The EU AI Act sets duties for deployers of AI systems used for EU clients."
+          },
+          {
+            "code": "CRA",
+            "name": "Regulation (EU) 2024/2847, Cyber Resilience Act",
+            "why": "Software with digital elements sold into the EU falls under the Cyber Resilience Act, including code written with AI help."
+          }
+        ],
+        "us": [
+          {
+            "code": "US-NIST-AI-RMF",
+            "name": "NIST AI Risk Management Framework (AI RMF 1.0, NIST AI 100-1)",
+            "why": "US clients often ask for AI risk management in line with the NIST AI Risk Management Framework."
+          },
+          {
+            "code": "US-NIST-CSF-2",
+            "name": "NIST Cybersecurity Framework 2.0",
+            "why": "US clients often ask for cyber controls mapped to the NIST Cybersecurity Framework."
+          }
+        ]
+      },
+      "rules_reading": "Checkable AI's reading of why AU, EU and US rules reach a business whose developers use GitHub Copilot Business on client code.",
+      "review": {
+        "status": "auto_needs_review",
+        "reviewed_at": null
+      }
+    },
+    {
+      "id": "google.gemini-api.paid",
+      "vendor": {
+        "id": "google",
+        "name": "Google"
+      },
+      "product": {
+        "id": "google.gemini-api",
+        "name": "Gemini API"
+      },
+      "name": "Gemini API, paid tier",
+      "terms": [
+        {
+          "title": "Gemini API Additional Terms of Service",
+          "url": "https://ai.google.dev/gemini-api/terms"
+        }
+      ],
+      "rules": {
+        "au": [
+          {
+            "code": "PA1988",
+            "name": "Privacy Act 1988 (Cth)",
+            "why": "The Privacy Act applies to personal information the business sends to the tool."
+          },
+          {
+            "code": "APPs",
+            "name": "Australian Privacy Principles (incl. APP 11 security of personal information)",
+            "why": "APP 8 and APP 11 cover sending personal information to an overseas tool and keeping it secure."
+          },
+          {
+            "code": "OAIC-AI",
+            "name": "OAIC guidance on privacy and AI (commercially available AI products, and developing and training generative AI models)",
+            "why": "The privacy regulator's AI guidance covers personal information put into AI products through an API."
+          }
+        ],
+        "eu": [
+          {
+            "code": "EU-GDPR",
+            "name": "General Data Protection Regulation as applied to AI",
+            "why": "Work for EU clients puts the vendor in the role of processor for their personal data."
+          },
+          {
+            "code": "EU-SCC-2021-914",
+            "name": "Standard contractual clauses for transfers to third countries",
+            "why": "Sending EU personal data to a vendor outside the EU needs a transfer tool such as standard contractual clauses."
+          },
+          {
+            "code": "EU-AIA",
+            "name": "Regulation (EU) 2024/1689, Artificial Intelligence Act",
+            "why": "The EU AI Act sets duties for deployers of AI systems used for EU clients."
+          }
+        ],
+        "us": [
+          {
+            "code": "US-FTC-S5-AI",
+            "name": "FTC Act Section 5 enforcement against AI practices (Operation AI Comply, Rite Aid order, Rytr set-aside)",
+            "why": "What the business tells US clients about how it uses AI and handles their data must be true."
+          },
+          {
+            "code": "US-NIST-AI-RMF",
+            "name": "NIST AI Risk Management Framework (AI RMF 1.0, NIST AI 100-1)",
+            "why": "US clients often ask for AI risk management in line with the NIST AI Risk Management Framework."
+          }
+        ]
+      },
+      "rules_reading": "Checkable AI's reading of why AU, EU and US rules reach a business that sends client data to the Gemini API.",
+      "review": {
+        "status": "auto_needs_review",
+        "reviewed_at": null
+      }
+    },
+    {
+      "id": "microsoft.m365-copilot.commercial",
+      "vendor": {
+        "id": "microsoft",
+        "name": "Microsoft"
+      },
+      "product": {
+        "id": "microsoft.m365-copilot",
+        "name": "Microsoft 365 Copilot"
+      },
+      "name": "Microsoft 365 Copilot",
+      "terms": [
+        {
+          "title": "Data",
+          "url": "https://learn.microsoft.com/en-us/copilot/microsoft-365/microsoft-365-copilot-privacy"
+        }
+      ],
+      "rules": {
+        "au": [
+          {
+            "code": "PA1988",
+            "name": "Privacy Act 1988 (Cth)",
+            "why": "The Privacy Act applies to personal information the business sends to the tool."
+          },
+          {
+            "code": "APPs",
+            "name": "Australian Privacy Principles (incl. APP 11 security of personal information)",
+            "why": "APP 8 and APP 11 cover sending personal information to an overseas tool and keeping it secure."
+          },
+          {
+            "code": "OAIC-AI-USE",
+            "name": "OAIC Guidance on privacy and the use of commercially available AI products",
+            "why": "The privacy regulator expects a privacy check before staff use a commercial AI product with personal information."
+          }
+        ],
+        "eu": [
+          {
+            "code": "EU-GDPR",
+            "name": "General Data Protection Regulation as applied to AI",
+            "why": "Work for EU clients puts the vendor in the role of processor for their personal data."
+          },
+          {
+            "code": "EU-AIA",
+            "name": "Regulation (EU) 2024/1689, Artificial Intelligence Act",
+            "why": "The EU AI Act sets duties for deployers of AI systems used for EU clients."
+          }
+        ],
+        "us": [
+          {
+            "code": "US-FTC-S5-AI",
+            "name": "FTC Act Section 5 enforcement against AI practices (Operation AI Comply, Rite Aid order, Rytr set-aside)",
+            "why": "What the business tells US clients about how it uses AI and handles their data must be true."
+          },
+          {
+            "code": "US-NIST-AI-RMF",
+            "name": "NIST AI Risk Management Framework (AI RMF 1.0, NIST AI 100-1)",
+            "why": "US clients often ask for AI risk management in line with the NIST AI Risk Management Framework."
+          }
+        ]
+      },
+      "rules_reading": "Checkable AI's reading of why AU, EU and US rules reach a business whose office staff use Microsoft 365 Copilot on client documents.",
+      "review": {
+        "status": "auto_needs_review",
+        "reviewed_at": null
+      }
+    }
+  ],
+  "changes": [
+    {
+      "change_id": "chg_openai-2025-05-13-nyt-preservation",
+      "event_id": "evt_01M5XZ3FNRPH1915F0XSDMX3YF",
+      "event_type": "change.updated",
+      "version": 2,
+      "supersedes": "evt_01M5XZ3EPGPMC5K45YZRMG8TGX",
+      "record_class": "replayed_vendor_change",
+      "vendor": {
+        "id": "openai",
+        "name": "OpenAI"
+      },
+      "products": [
+        {
+          "id": "openai.chatgpt",
+          "name": "ChatGPT"
+        },
+        {
+          "id": "openai.api",
+          "name": "OpenAI API"
+        }
+      ],
+      "title": "OpenAI preservation order: deleted ChatGPT and API content kept for a court case",
+      "summary": "A US court ordered OpenAI on 13 May 2025 to preserve output log data that would otherwise be deleted, for the New York Times copyright case. OpenAI said this reached ChatGPT Free, Plus, Pro and Team (now Business) and the OpenAI API without Zero Data Retention. ChatGPT Enterprise and Edu, and API traffic under Zero Data Retention, were named as out of scope.",
+      "vendor_date": "2025-05-13",
+      "vendor_updated_on": "2025-10-09",
+      "vendor_updated_basis": "court_record",
+      "detected_at": null,
+      "published_at": "2026-10-27T06:00:03Z",
+      "action": "Record the exposure from 13 May to 25 Sep 2025 in the vendor risk register for staff who used personal or Team ChatGPT for work and for API orgs without Zero Data Retention. No new action is needed for data created since 26 Sep 2025.",
+      "applicability": [
+        {
+          "plan_id": "openai.api.platform",
+          "plan_name": "OpenAI API",
+          "status": "fixed",
+          "reason": null
+        },
+        {
+          "plan_id": "openai.chatgpt.business",
+          "plan_name": "ChatGPT Business",
+          "status": "under_investigation",
+          "reason": "source_silent_on_effect"
+        },
+        {
+          "plan_id": "openai.chatgpt.edu",
+          "plan_name": "ChatGPT Edu",
+          "status": "not_affected",
+          "reason": null
+        },
+        {
+          "plan_id": "openai.chatgpt.enterprise",
+          "plan_name": "ChatGPT Enterprise",
+          "status": "not_affected",
+          "reason": null
+        },
+        {
+          "plan_id": "openai.chatgpt.free",
+          "plan_name": "ChatGPT Free",
+          "status": "fixed",
+          "reason": null
+        },
+        {
+          "plan_id": "openai.chatgpt.go",
+          "plan_name": "ChatGPT Go",
+          "status": "under_investigation",
+          "reason": "source_silent"
+        },
+        {
+          "plan_id": "openai.chatgpt.gov",
+          "plan_name": "ChatGPT Gov",
+          "status": "under_investigation",
+          "reason": "source_silent"
+        },
+        {
+          "plan_id": "openai.chatgpt.plus",
+          "plan_name": "ChatGPT Plus",
+          "status": "fixed",
+          "reason": null
+        },
+        {
+          "plan_id": "openai.chatgpt.pro",
+          "plan_name": "ChatGPT Pro",
+          "status": "fixed",
+          "reason": null
+        }
+      ],
+      "evidence": [
+        {
+          "id": "ev_oai-q1",
+          "url": "https://www.courtlistener.com/docket/68117049/551/the-new-york-times-company-v-microsoft-corporation/",
+          "title": "Order, The New York Times Company v. Microsoft Corporation, SDNY 1:23-cv-11195, ECF 551",
+          "published_on": "2025-05-13",
+          "quote": "OpenAI is NOW DIRECTED to preserve and segregate all output log data that would otherwise be deleted on a going forward basis until further order of the Court",
+          "quote_policy": "verbatim",
+          "our_reading": null,
+          "licence": {
+            "status": "public_domain",
+            "name": "Public domain (US court order)",
+            "url": null,
+            "attribution": "Order of the US District Court, Southern District of New York, via CourtListener.",
+            "read_on": "2026-11-06",
+            "basis": "US federal court orders carry no copyright (government edicts doctrine, Georgia v. Public.Resource.Org, 2020). CourtListener's terms page returned 403 to our fetch"
+          }
+        },
+        {
+          "id": "ev_oai-q15",
+          "url": "https://www.courtlistener.com/docket/68117049/922/the-new-york-times-company-v-microsoft-corporation/",
+          "title": "Stipulation and Order to Terminate OpenAI's Ongoing Obligations Under the Preservation Order, SDNY 1:23-cv-11195, ECF 922",
+          "published_on": "2025-10-09",
+          "quote": "Subject to paragraphs 3-4 below, OpenAI's ongoing obligation to \"preserve and segregate all output log data that would otherwise be deleted on a going forward basis\" is terminated as of September 26, 2025.",
+          "quote_policy": "verbatim",
+          "our_reading": null,
+          "licence": {
+            "status": "public_domain",
+            "name": "Public domain (US court order)",
+            "url": null,
+            "attribution": "Order of the US District Court, Southern District of New York, via CourtListener.",
+            "read_on": "2026-11-06",
+            "basis": "US federal court orders carry no copyright (government edicts doctrine, Georgia v. Public.Resource.Org, 2020). CourtListener's terms page returned 403 to our fetch"
+          }
+        },
+        {
+          "id": "ev_oai-q16",
+          "url": "https://www.courtlistener.com/docket/68117049/922/the-new-york-times-company-v-microsoft-corporation/",
+          "title": "Stipulation and Order to Terminate OpenAI's Ongoing Obligations Under the Preservation Order, SDNY 1:23-cv-11195, ECF 922",
+          "published_on": "2025-10-09",
+          "quote": "OpenAI will continue to preserve the output log data already preserved and segregated pursuant to the Preservation Order prior to September 26, 2025",
+          "quote_policy": "verbatim",
+          "our_reading": null,
+          "licence": {
+            "status": "public_domain",
+            "name": "Public domain (US court order)",
+            "url": null,
+            "attribution": "Order of the US District Court, Southern District of New York, via CourtListener.",
+            "read_on": "2026-11-06",
+            "basis": "US federal court orders carry no copyright (government edicts doctrine, Georgia v. Public.Resource.Org, 2020). CourtListener's terms page returned 403 to our fetch"
+          }
+        },
+        {
+          "id": "ev_oai-q4",
+          "url": "https://openai.com/index/response-to-nyt-data-demands/",
+          "title": "How we're responding to The New York Times' data demands in order to protect user privacy",
+          "published_on": "2025-06-05",
+          "quote": null,
+          "quote_policy": "link_and_paraphrase",
+          "our_reading": "Checkable AI's reading of OpenAI's data demands page of June 2025: the court's preservation order reached ChatGPT Free, Plus, Pro and Team subscriptions and the OpenAI API, unless a Zero Data Retention agreement was in place.",
+          "licence": {
+            "status": "no_reuse_licence",
+            "name": null,
+            "url": null,
+            "attribution": null,
+            "read_on": "2026-11-06",
+            "basis": "Page shows a copyright notice and no reuse licence"
+          }
+        },
+        {
+          "id": "ev_oai-q11",
+          "url": "https://openai.com/index/response-to-nyt-data-demands/",
+          "title": "How we're responding to The New York Times' data demands (update of 22 October 2025)",
+          "published_on": "2025-10-22",
+          "quote": null,
+          "quote_policy": "link_and_paraphrase",
+          "our_reading": "Checkable AI's reading of OpenAI's update of 22 October 2025: OpenAI says the court order no longer requires it to keep consumer ChatGPT and API content without an end date, and that the earlier obligations stopped on 26 September 2025.",
+          "licence": {
+            "status": "no_reuse_licence",
+            "name": null,
+            "url": null,
+            "attribution": null,
+            "read_on": "2026-11-06",
+            "basis": "Page shows a copyright notice and no reuse licence"
+          }
+        }
+      ],
+      "licence": {
+        "quotes": "mixed"
+      },
+      "review": {
+        "status": "person_confirmed",
+        "reviewed_at": "2026-10-27T04:13:57Z"
+      }
+    },
+    {
+      "change_id": "chg_anthropic-2025-08-28-consumer-terms",
+      "event_id": "evt_01M5XZ3DQ8W0MZW4G38RR5GFWX",
+      "event_type": "change.updated",
+      "version": 2,
+      "supersedes": "evt_01M5XZ3CR02KV2ZHMN8FQXD3PN",
+      "record_class": "replayed_vendor_change",
+      "vendor": {
+        "id": "anthropic",
+        "name": "Anthropic"
+      },
+      "products": [
+        {
+          "id": "anthropic.claude",
+          "name": "Claude apps"
+        },
+        {
+          "id": "anthropic.claude-api",
+          "name": "Claude API"
+        }
+      ],
+      "title": "Anthropic consumer terms: Claude chats may train models, with a choice due",
+      "summary": "Anthropic updated its consumer terms and privacy policy on 28 Aug 2025. Users on Claude Free, Pro and Max, including Claude Code on those accounts, must accept the terms and choose whether their chats are used to train models. With training on, new or resumed chats are kept for up to five years. Claude for Work (Team and Enterprise), Claude for Government, Claude for Education and API use, including Amazon Bedrock and Google Cloud Vertex AI, are named as out of scope.",
+      "vendor_date": "2025-08-28",
+      "vendor_updated_on": "2025-09-30",
+      "vendor_updated_basis": "archive_first_capture",
+      "detected_at": null,
+      "published_at": "2026-10-27T06:00:01Z",
+      "action": "Find staff using Claude Free, Pro or Max for work. Have them turn model training off, or move them to a Team or Enterprise plan.",
+      "applicability": [
+        {
+          "plan_id": "anthropic.claude-api.bedrock",
+          "plan_name": "Claude on Amazon Bedrock",
+          "status": "not_affected",
+          "reason": null
+        },
+        {
+          "plan_id": "anthropic.claude-api.first-party",
+          "plan_name": "Anthropic API (Commercial Terms)",
+          "status": "not_affected",
+          "reason": null
+        },
+        {
+          "plan_id": "anthropic.claude-api.vertex",
+          "plan_name": "Claude on Google Cloud Vertex AI",
+          "status": "not_affected",
+          "reason": null
+        },
+        {
+          "plan_id": "anthropic.claude.education",
+          "plan_name": "Claude for Education",
+          "status": "not_affected",
+          "reason": null
+        },
+        {
+          "plan_id": "anthropic.claude.enterprise",
+          "plan_name": "Claude Enterprise",
+          "status": "not_affected",
+          "reason": null
+        },
+        {
+          "plan_id": "anthropic.claude.free",
+          "plan_name": "Claude Free",
+          "status": "affected",
+          "reason": null
+        },
+        {
+          "plan_id": "anthropic.claude.government",
+          "plan_name": "Claude for Government",
+          "status": "not_affected",
+          "reason": null
+        },
+        {
+          "plan_id": "anthropic.claude.max",
+          "plan_name": "Claude Max",
+          "status": "affected",
+          "reason": null
+        },
+        {
+          "plan_id": "anthropic.claude.pro",
+          "plan_name": "Claude Pro",
+          "status": "affected",
+          "reason": null
+        },
+        {
+          "plan_id": "anthropic.claude.team",
+          "plan_name": "Claude Team",
+          "status": "not_affected",
+          "reason": null
+        }
+      ],
+      "evidence": [
+        {
+          "id": "ev_anth-q1",
+          "url": "https://www.anthropic.com/news/updates-to-our-consumer-terms",
+          "title": "Updates to Consumer Terms and Privacy Policy",
+          "published_on": "2025-08-28",
+          "quote": null,
+          "quote_policy": "link_and_paraphrase",
+          "our_reading": "Checkable AI's reading of Anthropic's consumer terms announcement: the update applies to Claude Free, Pro and Max users, and to Claude Code used on accounts tied to those plans.",
+          "licence": {
+            "status": "no_reuse_licence",
+            "name": null,
+            "url": null,
+            "attribution": null,
+            "read_on": "2026-11-06",
+            "basis": "Page shows a copyright notice and no reuse licence"
+          }
+        },
+        {
+          "id": "ev_anth-q2",
+          "url": "https://www.anthropic.com/news/updates-to-our-consumer-terms",
+          "title": "Updates to Consumer Terms and Privacy Policy",
+          "published_on": "2025-08-28",
+          "quote": null,
+          "quote_policy": "link_and_paraphrase",
+          "our_reading": "Checkable AI's reading of Anthropic's consumer terms announcement: the update does not reach services under the Commercial Terms, which Anthropic lists as Claude for Work, Claude Gov, Claude for Education and API use, including through Amazon Bedrock and Google Cloud Vertex AI.",
+          "licence": {
+            "status": "no_reuse_licence",
+            "name": null,
+            "url": null,
+            "attribution": null,
+            "read_on": "2026-11-06",
+            "basis": "Page shows a copyright notice and no reuse licence"
+          }
+        },
+        {
+          "id": "ev_anth-q6",
+          "url": "https://www.anthropic.com/news/updates-to-our-consumer-terms",
+          "title": "Updates to Consumer Terms and Privacy Policy",
+          "published_on": "2025-08-28",
+          "quote": null,
+          "quote_policy": "link_and_paraphrase",
+          "our_reading": "Checkable AI's reading of Anthropic's consumer terms announcement: Anthropic will train new models on Free, Pro and Max chats while the training setting is on, Claude Code on those accounts included.",
+          "licence": {
+            "status": "no_reuse_licence",
+            "name": null,
+            "url": null,
+            "attribution": null,
+            "read_on": "2026-11-06",
+            "basis": "Page shows a copyright notice and no reuse licence"
+          }
+        },
+        {
+          "id": "ev_anth-q10",
+          "url": "https://www.anthropic.com/news/updates-to-our-consumer-terms",
+          "title": "Updates to Consumer Terms and Privacy Policy",
+          "published_on": "2025-08-28",
+          "quote": null,
+          "quote_policy": "link_and_paraphrase",
+          "our_reading": "Checkable AI's reading of Anthropic's consumer terms announcement: chats are kept for up to five years when a user lets Anthropic use them for model training.",
+          "licence": {
+            "status": "no_reuse_licence",
+            "name": null,
+            "url": null,
+            "attribution": null,
+            "read_on": "2026-11-06",
+            "basis": "Page shows a copyright notice and no reuse licence"
+          }
+        }
+      ],
+      "licence": {
+        "quotes": "paraphrase_only"
+      },
+      "review": {
+        "status": "person_confirmed",
+        "reviewed_at": "2026-10-27T04:13:57Z"
+      }
+    },
+    {
+      "change_id": "chg_openai-2026-10-21-service-tier-limits",
+      "event_id": "evt_01M5XZ3KJRBGKK7QPTD5JW0SK3",
+      "event_type": "change.published",
+      "version": 1,
+      "supersedes": null,
+      "record_class": "observed_vendor_change",
+      "vendor": {
+        "id": "openai",
+        "name": "OpenAI"
+      },
+      "products": [
+        {
+          "id": "openai.api",
+          "name": "OpenAI API"
+        }
+      ],
+      "title": "OpenAI lets API organisations restrict service tiers per project",
+      "summary": "OpenAI's API changelog entry of 21 Oct 2026 adds a control over service tiers. In the Platform settings an organisation can now limit the tiers each project is allowed to call, or set one limit at organisation level that applies to every project.",
+      "vendor_date": "2026-10-21",
+      "vendor_updated_on": null,
+      "vendor_updated_basis": null,
+      "detected_at": "2026-10-21T23:30:16Z",
+      "published_at": "2026-10-27T06:00:07Z",
+      "action": "Review the allowed service tiers in Platform settings if you want to limit cost or latency tiers across projects.",
+      "applicability": [
+        {
+          "plan_id": "openai.api.platform",
+          "plan_name": "OpenAI API",
+          "status": "affected",
+          "reason": null
+        }
+      ],
+      "evidence": [
+        {
+          "id": "ev_mon-tier",
+          "url": "https://developers.openai.com/api/docs/changelog",
+          "title": "OpenAI API changelog",
+          "published_on": "2026-10-21",
+          "quote": null,
+          "quote_policy": "link_and_paraphrase",
+          "our_reading": "Checkable AI's reading of OpenAI's API changelog: organisation admins can pick which service tiers each project may use in Platform settings, and can limit tiers across every project from organisation settings.",
+          "licence": {
+            "status": "no_reuse_licence",
+            "name": null,
+            "url": null,
+            "attribution": null,
+            "read_on": "2026-11-06",
+            "basis": "Page shows a copyright notice and no reuse licence"
+          }
+        }
+      ],
+      "licence": {
+        "quotes": "paraphrase_only"
+      },
+      "review": {
+        "status": "auto_needs_review",
+        "reviewed_at": null
+      }
+    },
+    {
+      "change_id": "chg_github-2026-10-26-gpt-6-1-terra-copilot",
+      "event_id": "evt_01M5XZ3RF09PGKVJ3T3H03NVC7",
+      "event_type": "change.published",
+      "version": 1,
+      "supersedes": null,
+      "record_class": "observed_vendor_change",
+      "vendor": {
+        "id": "github",
+        "name": "GitHub"
+      },
+      "products": [
+        {
+          "id": "github.copilot",
+          "name": "GitHub Copilot"
+        }
+      ],
+      "title": "GitHub makes GPT-6.1 Terra generally available in Copilot, enabled by default for Business and Enterprise",
+      "summary": "In a changelog post published on 26 Oct 2026, GitHub adds the GPT-6.1 Terra model to Copilot Pro, Pro+, Max, Business and Enterprise. On Business and Enterprise an admin allows or blocks it in the Copilot model policy. New models are on by default, so it is live for an organisation unless an admin has switched off default enablement or blocked this model. Use is charged by usage at the model provider's list price. Copilot Free is not named. The page address carries 23 Oct, while the post's own published time is 26 Oct 2026 19:15 UTC, the date used here.",
+      "vendor_date": "2026-10-26",
+      "vendor_updated_on": null,
+      "vendor_updated_basis": null,
+      "detected_at": "2026-10-26T22:08:00Z",
+      "published_at": "2026-10-27T06:00:12Z",
+      "action": "If you keep an approved model list for Copilot, check the model policy now and disable GPT-6.1 Terra if it is not approved. If it stays on, check usage-based billing limits for the new model.",
+      "applicability": [
+        {
+          "plan_id": "github.copilot.business",
+          "plan_name": "GitHub Copilot Business",
+          "status": "affected",
+          "reason": null
+        },
+        {
+          "plan_id": "github.copilot.enterprise",
+          "plan_name": "GitHub Copilot Enterprise",
+          "status": "affected",
+          "reason": null
+        },
+        {
+          "plan_id": "github.copilot.free",
+          "plan_name": "GitHub Copilot Free",
+          "status": "under_investigation",
+          "reason": "source_silent"
+        },
+        {
+          "plan_id": "github.copilot.max",
+          "plan_name": "GitHub Copilot Max",
+          "status": "affected",
+          "reason": null
+        },
+        {
+          "plan_id": "github.copilot.pro",
+          "plan_name": "GitHub Copilot Pro",
+          "status": "affected",
+          "reason": null
+        },
+        {
+          "plan_id": "github.copilot.pro-plus",
+          "plan_name": "GitHub Copilot Pro+",
+          "status": "affected",
+          "reason": null
+        }
+      ],
+      "evidence": [
+        {
+          "id": "ev_mon-ghmodel-plans",
+          "url": "https://github.blog/changelog/2026-10-23-gpt-6-1-terra-in-github-copilot",
+          "title": "GPT-6.1 Terra in GitHub Copilot",
+          "published_on": "2026-10-26",
+          "quote": null,
+          "quote_policy": "link_and_paraphrase",
+          "our_reading": "Checkable AI's reading of GitHub's changelog post: GitHub names Copilot Pro, Pro+, Max, Business and Enterprise as the plans that get GPT-6.1 Terra.",
+          "licence": {
+            "status": "no_reuse_licence",
+            "name": null,
+            "url": null,
+            "attribution": null,
+            "read_on": "2026-11-06",
+            "basis": "Page shows a copyright notice and no reuse licence"
+          }
+        },
+        {
+          "id": "ev_mon-ghmodel-admin",
+          "url": "https://github.blog/changelog/2026-10-23-gpt-6-1-terra-in-github-copilot",
+          "title": "GPT-6.1 Terra in GitHub Copilot",
+          "published_on": "2026-10-26",
+          "quote": null,
+          "quote_policy": "link_and_paraphrase",
+          "our_reading": "Checkable AI's reading of GitHub's changelog post: on Copilot Business and Enterprise the model policy in Copilot settings is where an administrator allows or blocks GPT-6.1 Terra.",
+          "licence": {
+            "status": "no_reuse_licence",
+            "name": null,
+            "url": null,
+            "attribution": null,
+            "read_on": "2026-11-06",
+            "basis": "Page shows a copyright notice and no reuse licence"
+          }
+        },
+        {
+          "id": "ev_mon-ghmodel-default",
+          "url": "https://github.blog/changelog/2026-10-23-gpt-6-1-terra-in-github-copilot",
+          "title": "GPT-6.1 Terra in GitHub Copilot",
+          "published_on": "2026-10-26",
+          "quote": null,
+          "quote_policy": "link_and_paraphrase",
+          "our_reading": "Checkable AI's reading of GitHub's changelog post: new models are on by default, so GPT-6.1 Terra is live for an organisation unless an admin has switched off default enablement or blocked this model.",
+          "licence": {
+            "status": "no_reuse_licence",
+            "name": null,
+            "url": null,
+            "attribution": null,
+            "read_on": "2026-11-06",
+            "basis": "Page shows a copyright notice and no reuse licence"
+          }
+        },
+        {
+          "id": "ev_mon-ghmodel-billing",
+          "url": "https://github.blog/changelog/2026-10-23-gpt-6-1-terra-in-github-copilot",
+          "title": "GPT-6.1 Terra in GitHub Copilot",
+          "published_on": "2026-10-26",
+          "quote": null,
+          "quote_policy": "link_and_paraphrase",
+          "our_reading": "Checkable AI's reading of GitHub's changelog post: use of the model is charged by usage at the model provider's list price.",
+          "licence": {
+            "status": "no_reuse_licence",
+            "name": null,
+            "url": null,
+            "attribution": null,
+            "read_on": "2026-11-06",
+            "basis": "Page shows a copyright notice and no reuse licence"
+          }
+        }
+      ],
+      "licence": {
+        "quotes": "paraphrase_only"
+      },
+      "review": {
+        "status": "auto_needs_review",
+        "reviewed_at": null
+      }
+    },
+    {
+      "change_id": "chg_google-2026-10-26-gemini-api-storage-default",
+      "event_id": "evt_01M5XZ3NH82AB7WHQP2FE2SMKG",
+      "event_type": "change.published",
+      "version": 1,
+      "supersedes": null,
+      "record_class": "observed_vendor_change",
+      "vendor": {
+        "id": "google",
+        "name": "Google"
+      },
+      "products": [
+        {
+          "id": "google.gemini-api",
+          "name": "Gemini API"
+        }
+      ],
+      "title": "Google turns request storage on by default for new Gemini API paid projects",
+      "summary": "Google's Gemini API changelog of 26 Oct 2026 says new projects using the Generate Content API on the paid tier now store requests by default (store=true). Existing projects keep their current setting. The note does not mention the free tier.",
+      "vendor_date": "2026-10-26",
+      "vendor_updated_on": null,
+      "vendor_updated_basis": null,
+      "detected_at": "2026-10-26T22:08:37Z",
+      "published_at": "2026-10-27T06:00:09Z",
+      "action": "Check any Gemini API project created from 26 Oct 2026. Set store=false per request or turn off Generate Content API logging in the Logs and Datasets settings if you do not want requests kept.",
+      "applicability": [
+        {
+          "plan_id": "google.gemini-api.free",
+          "plan_name": "Gemini API, free tier (unpaid quota)",
+          "status": "under_investigation",
+          "reason": "source_silent"
+        },
+        {
+          "plan_id": "google.gemini-api.paid",
+          "plan_name": "Gemini API, paid tier",
+          "status": "affected",
+          "reason": null
+        }
+      ],
+      "evidence": [
+        {
+          "id": "ev_mon-gemstore-new",
+          "url": "https://ai.google.dev/gemini-api/docs/changelog",
+          "title": "Gemini API changelog",
+          "published_on": "2026-10-26",
+          "quote": "New projects using the Generate Content API (generateContent, streamGenerateContent, and batchGenerateContent) on the paid tier now store requests by default (store=true), matching the Interactions API.",
+          "quote_policy": "verbatim",
+          "our_reading": null,
+          "licence": {
+            "status": "confirmed_reusable",
+            "name": "CC BY 4.0",
+            "url": "https://creativecommons.org/licenses/by/4.0/",
+            "attribution": "Google for Developers, licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/).",
+            "read_on": "2026-11-06",
+            "basis": "Page footer licence statement"
+          }
+        },
+        {
+          "id": "ev_mon-gemstore-opt",
+          "url": "https://ai.google.dev/gemini-api/docs/changelog",
+          "title": "Gemini API changelog",
+          "published_on": "2026-10-26",
+          "quote": "Existing projects keep their current setting. To opt out, set store=false on individual requests or turn off Generate Content API logging in the Settings panel of the Logs and Datasets dashboard.",
+          "quote_policy": "verbatim",
+          "our_reading": null,
+          "licence": {
+            "status": "confirmed_reusable",
+            "name": "CC BY 4.0",
+            "url": "https://creativecommons.org/licenses/by/4.0/",
+            "attribution": "Google for Developers, licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/).",
+            "read_on": "2026-11-06",
+            "basis": "Page footer licence statement"
+          }
+        }
+      ],
+      "licence": {
+        "quotes": "verbatim"
+      },
+      "review": {
+        "status": "auto_needs_review",
+        "reviewed_at": null
+      }
+    }
+  ]
+}

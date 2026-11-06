@@ -1,0 +1,11 @@
+# AI model configuration for the summariser service of Example Bay Advisory, a fictional sample company.
+# The service reads this file at start-up. It makes no AI call in this demo, it only reports what is configured.
+# The Checkable gate reads this file on every pull request that changes it, matches the vendor and plan
+# against ai-vendor-register.yaml, and waits for a person to sign the change off.
+service: summariser
+register_tool: gemini-api-paid
+vendor: Google
+product: google.gemini-api
+plan: google.gemini-api.paid
+# A placeholder model label for the demo, not a pinned vendor model id.
+model: gemini-flash

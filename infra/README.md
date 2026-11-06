@@ -25,7 +25,7 @@ State: S3 backend, key `checkable-ai/ci-demo/service.tfstate`, `use_lockfile = t
 
 The required check. The job's `name:` is `terraform/plan`, and GitHub names a job's check run after it, so that string is the context to require in the ruleset. Keep the name exactly as it is.
 
-It runs on every pull request with no path filter. A required check that never starts leaves a pull request waiting forever, so the first step decides the scope instead. A pull request that changes nothing under `infra/` or `service/` (or `terraform-plan.yml` or `deploy.yml`) ends green at once with no AWS call. A fork pull request ends green with a note, because forks get no OIDC token. Otherwise the job runs `terraform plan` for `infra/service` and posts it as one sticky comment (updated on every push, found by its `<!-- checkable-terraform-plan v1 -->` marker) and as the job summary. A failed plan turns the check red and the comment shows the error.
+It runs on every pull request with no path filter. A required check that never starts leaves a pull request waiting forever, so the first step decides the scope instead. A pull request that changes nothing under `infra/` or `service/` (or `terraform-plan.yml` or `deploy.yml`) ends green at once with no AWS call. A fork or Dependabot pull request ends green with a note, because neither gets an OIDC token. Otherwise the job runs `terraform plan` for `infra/service` and posts it as one sticky comment (updated on every push, found by its `<!-- checkable-terraform-plan v1 -->` marker) and as the job summary. A failed plan turns the check red and the comment shows the error.
 
 The plan role reads the function, its execution role and log group, and the state. It writes only the state lock file. A plan runs the pull request's own Terraform, so a branch author could read what that role reads. Forks cannot, and the role reaches nothing else.
 
@@ -50,6 +50,8 @@ The job summary gives the URL, the model, the plan counts, the smoke test result
 ## Set-up, in order
 
 Nothing here is applied yet.
+
+0. Raise the Lambda concurrent executions quota in 726495711127 (Service Quotas, AWS Lambda, Concurrent executions). It was 10 on 6 Nov 2026, and Lambda keeps 10 unreserved, so the reservation of 2 fails until the quota is 12 or more. New accounts are usually raised to 1,000 on request at no charge. Until then, deploy with `reserved_concurrency = -1` (no reservation, the account limit of 10 caps it instead).
 
 1. Create `checkable-ai/ci-demo` and read its id: `gh api repos/checkable-ai/ci-demo --jq .id`.
 2. Apply the roles stack (site repo, `infra/aws/github-oidc-ses`) with `-var github_repo_id=<id>`. It makes the plan and deploy roles and the permissions boundary.

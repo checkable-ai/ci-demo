@@ -28,7 +28,7 @@ variable "permissions_boundary_name" {
 }
 
 variable "reserved_concurrency" {
-  description = "A public URL with no auth, so at most this many copies run at once."
+  description = "A public URL with no auth, so at most this many copies run at once. 0 stops every call. -1 reserves none. Lambda keeps 10 unreserved, so 2 needs an account concurrency quota of at least 12 (726495711127 had 10 on 6 Nov 2026)."
   type        = number
   default     = 2
 }

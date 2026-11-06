@@ -11,7 +11,8 @@ from scripts.checkable.register import parse_register
 from tests.helpers import ROOT, make_feed
 
 FEED = make_feed()
-REGISTER_PATH = os.path.join(ROOT, "ai-vendor-register.yaml")
+# The register as the demo starts, frozen, so these tests hold before and after the demo pull requests.
+REGISTER_PATH = os.path.join(ROOT, "tests", "fixtures", "register-demo-start.yaml")
 K8S_DIR = os.path.join(ROOT, "k8s")
 SERVICE_TIER = "chg_openai-2026-10-21-service-tier-limits"
 GEMINI = "chg_google-2026-10-26-gemini-api-storage-default"

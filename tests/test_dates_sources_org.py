@@ -50,7 +50,7 @@ def _snapshot_and_register():
         feed = load_feed(None)
     finally:
         os.chdir(cwd)
-    with open(os.path.join(ROOT, "ai-vendor-register.yaml"), encoding="utf-8") as f:
+    with open(os.path.join(ROOT, "tests", "fixtures", "register-demo-start.yaml"), encoding="utf-8") as f:
         return feed, parse_register(f.read())
 
 

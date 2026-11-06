@@ -1,0 +1,169 @@
+name: Deploy
+
+# Flow 3: deploy the summariser service (infra/service) to AWS Lambda in ap-southeast-2 when a change to it lands
+# on main, or on demand from main.
+#
+# 1. `checkable/deploy-gate` finds the merged pull request for this commit and checks that the Checkable gate
+#    passed it: the newest checkable/sign-off status on its head commit is success from the gate's bot, and a
+#    "Signed off by" status matches the sign-off recorded in the gate comment (scripts/checkable/deploy_gate.py,
+#    the gate's own constants and helpers). A direct push, a missing or failed status, or an API error fails it.
+#    No sign-off, no deploy.
+# 2. `deploy` runs in the `production` environment, which gives the GitHub Deployments view and is the only job
+#    the deploy role trusts (OIDC sub ...:environment:production). It makes a fresh plan, applies exactly that
+#    plan, smoke tests GET /health and POST /summarise, and writes the job summary.
+#
+# One deploy at a time and none cancelled: concurrency group `production`. GitHub keeps one run waiting in the
+# group, so if several merges land during a deploy only the newest waits, and it deploys the newest main.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "infra/service/**"
+      - "infra/scripts/**"
+      - "service/**"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+# shell: bash runs every step with -eo pipefail, so a failed plan piped into tee still fails the step.
+defaults:
+  run:
+    shell: bash
+
+env:
+  TF_IN_AUTOMATION: "1"
+  TF_INPUT: "0"
+  TF_DIR: infra/service
+
+jobs:
+  deploy-gate:
+    name: checkable/deploy-gate
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+      statuses: read
+    outputs:
+      pr_number: ${{ steps.gate.outputs.pr_number }}
+      mode: ${{ steps.gate.outputs.mode }}
+      signed_by: ${{ steps.gate.outputs.signed_by }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - run: pip install -r scripts/requirements.txt
+      - name: Check the Checkable sign-off
+        id: gate
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          DEPLOY_SHA: ${{ github.sha }}
+          CHECKABLE_BOT_LOGINS: ${{ vars.CHECKABLE_BOT_LOGINS }}
+        run: python -m scripts.checkable.deploy_gate
+
+  deploy:
+    name: deploy
+    needs: deploy-gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment:
+      name: production
+      url: ${{ steps.url.outputs.function_url }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check repo variables
+        env:
+          TF_DEPLOY_ROLE_ARN: ${{ vars.TF_DEPLOY_ROLE_ARN }}
+          TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
+        run: |
+          missing=""
+          [ -n "$TF_DEPLOY_ROLE_ARN" ] || missing="$missing TF_DEPLOY_ROLE_ARN"
+          [ -n "$TF_STATE_BUCKET" ] || missing="$missing TF_STATE_BUCKET"
+          if [ -n "$missing" ]; then
+            echo "::error::Set the repo variables:$missing (outputs of the github-oidc-ses roles stack)."
+            exit 1
+          fi
+
+      - uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
+        with:
+          role-to-assume: ${{ vars.TF_DEPLOY_ROLE_ARN }}
+          role-session-name: deploy-${{ github.run_id }}
+          aws-region: ap-southeast-2
+
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
+        with:
+          terraform_version: "1.16.6"
+          terraform_wrapper: false
+
+      - name: terraform init
+        env:
+          TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
+        run: terraform -chdir="$TF_DIR" init -no-color -backend-config="bucket=$TF_STATE_BUCKET"
+
+      - name: terraform plan
+        run: |
+          terraform -chdir="$TF_DIR" plan -no-color -lock-timeout=120s -out=tfplan | tee plan.txt
+          terraform -chdir="$TF_DIR" show -json tfplan > plan.json
+
+      - name: Plan counts
+        id: counts
+        run: python3 infra/scripts/plan_report.py --plan-json plan.json --plan-text plan.txt --title "Deploy plan, infra/service"
+
+      - name: terraform apply
+        run: terraform -chdir="$TF_DIR" apply -no-color -lock-timeout=120s -auto-approve tfplan
+
+      - name: Function URL
+        id: url
+        run: echo "function_url=$(terraform -chdir="$TF_DIR" output -raw function_url)" >> "$GITHUB_OUTPUT"
+
+      - name: Smoke test
+        id: smoke
+        env:
+          FUNCTION_URL: ${{ steps.url.outputs.function_url }}
+        run: python3 infra/scripts/smoke.py "$FUNCTION_URL" service/summariser/model.yaml
+
+      - name: Job summary
+        if: always()
+        env:
+          FUNCTION_URL: ${{ steps.url.outputs.function_url }}
+          MODEL: ${{ steps.smoke.outputs.model }}
+          VENDOR: ${{ steps.smoke.outputs.vendor }}
+          PLAN_ID: ${{ steps.smoke.outputs.plan }}
+          COUNTS: ${{ steps.counts.outputs.counts }}
+          SMOKE: ${{ steps.smoke.outputs.result }}
+          PR_NUMBER: ${{ needs.deploy-gate.outputs.pr_number }}
+          MODE: ${{ needs.deploy-gate.outputs.mode }}
+          SIGNED_BY: ${{ needs.deploy-gate.outputs.signed_by }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          if [ "$MODE" = "signed" ]; then signoff="signed off by $SIGNED_BY"; else signoff="no AI tools changed, no sign-off needed"; fi
+          {
+            echo "## Deploy to production"
+            echo ""
+            echo "| | |"
+            echo "| --- | --- |"
+            echo "| Result | ${JOB_STATUS} |"
+            echo "| URL | ${FUNCTION_URL:-not deployed} |"
+            echo "| Model | ${MODEL:-unknown} (${VENDOR:-unknown}, plan \`${PLAN_ID:-unknown}\`) |"
+            echo "| Plan | ${COUNTS:-no plan} |"
+            echo "| Smoke test | ${SMOKE:-not run} |"
+            echo "| Pull request | #${PR_NUMBER}, ${signoff} |"
+            echo "| Commit | \`${GITHUB_SHA::7}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"

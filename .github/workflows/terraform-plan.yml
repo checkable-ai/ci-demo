@@ -1,0 +1,135 @@
+name: Terraform plan
+
+# The required `terraform/plan` check (flow 3). The job's `name:` is the check context: a required status check
+# matches the check run name, which for a job is its `name`, so this job must stay named exactly terraform/plan.
+#
+# It runs on every pull request with no path filter, because a required check that never starts leaves the pull
+# request waiting forever. The first step decides the scope: a pull request that touches nothing under infra/ or
+# service/ (or this workflow, or deploy.yml) ends green at once, with no AWS call. Otherwise the job assumes the
+# plan role through GitHub OIDC (read only, plus the state lock file), runs terraform plan for infra/service, and
+# posts the plan as one sticky comment and as the job summary. A plan that fails turns the check red.
+#
+# Pull requests from forks get no OIDC token, so they end green with a note: a maintainer brings the change onto a
+# branch in this repo, as for the Checkable gate.
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: terraform-plan-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+# shell: bash runs every step with -eo pipefail, so a failed plan piped into tee still fails the step.
+defaults:
+  run:
+    shell: bash
+
+env:
+  TF_IN_AUTOMATION: "1"
+  TF_INPUT: "0"
+  TF_DIR: infra/service
+
+jobs:
+  plan:
+    name: terraform/plan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Scope
+        id: scope
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        run: |
+          changed="$(git diff --name-only "$BASE_SHA...$HEAD_SHA" \
+            | grep -E '^(infra/|service/|\.github/workflows/(terraform-plan|deploy)\.yml$)' || true)"
+          if [ -z "$changed" ]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            reason="Nothing under infra/ or service/ changed, so there is nothing to plan."
+          elif [ "$HEAD_REPO" != "$GITHUB_REPOSITORY" ]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            reason="Fork pull request: no plan, forks get no AWS credentials. A maintainer brings the change onto a branch in this repo."
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            reason=""
+          fi
+          if [ -n "$reason" ]; then
+            { echo "## terraform/plan"; echo ""; echo "$reason"; } >> "$GITHUB_STEP_SUMMARY"
+            echo "$reason"
+          else
+            echo "Files in scope:"; echo "$changed"
+          fi
+
+      - name: Check repo variables
+        if: steps.scope.outputs.run == 'true'
+        env:
+          TF_PLAN_ROLE_ARN: ${{ vars.TF_PLAN_ROLE_ARN }}
+          TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
+        run: |
+          missing=""
+          [ -n "$TF_PLAN_ROLE_ARN" ] || missing="$missing TF_PLAN_ROLE_ARN"
+          [ -n "$TF_STATE_BUCKET" ] || missing="$missing TF_STATE_BUCKET"
+          if [ -n "$missing" ]; then
+            echo "::error::Set the repo variables:$missing (outputs of the github-oidc-ses roles stack)."
+            exit 1
+          fi
+
+      - uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
+        if: steps.scope.outputs.run == 'true'
+        with:
+          role-to-assume: ${{ vars.TF_PLAN_ROLE_ARN }}
+          role-session-name: terraform-plan-pr-${{ github.event.pull_request.number }}
+          aws-region: ap-southeast-2
+
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
+        if: steps.scope.outputs.run == 'true'
+        with:
+          terraform_version: "1.16.6"
+          terraform_wrapper: false
+
+      - name: terraform init
+        if: steps.scope.outputs.run == 'true'
+        env:
+          TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
+        run: terraform -chdir="$TF_DIR" init -no-color -backend-config="bucket=$TF_STATE_BUCKET"
+
+      - name: terraform plan
+        id: plan
+        if: steps.scope.outputs.run == 'true'
+        run: |
+          set +e
+          terraform -chdir="$TF_DIR" plan -no-color -lock-timeout=120s -out=tfplan > plan.txt 2>&1
+          rc=$?
+          cat plan.txt
+          if [ "$rc" -eq 0 ]; then
+            terraform -chdir="$TF_DIR" show -json tfplan > plan.json
+            rc=$?
+          fi
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Plan comment and summary
+        if: steps.scope.outputs.run == 'true' && always() && steps.plan.outcome == 'success'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CHECKABLE_BOT_LOGINS: ${{ vars.CHECKABLE_BOT_LOGINS }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PLAN_RC: ${{ steps.plan.outputs.rc }}
+        run: |
+          failed=""
+          [ "$PLAN_RC" = "0" ] || failed="--failed"
+          python3 infra/scripts/plan_report.py --plan-json plan.json --plan-text plan.txt \
+            --title "terraform/plan, infra/service" --comment "$PR_NUMBER" $failed

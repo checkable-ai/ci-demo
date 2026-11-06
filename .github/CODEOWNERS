@@ -1,0 +1,22 @@
+# Every change needs a review from the reviewers team of the checkable-ai organisation.
+# The later lines name the paths the Checkable gate guards, so a ruleset that requires code owner
+# review keeps a person on each of them even if the default line changes.
+*                         @checkable-ai/reviewers
+
+# The AI vendor register and the change records the nightly check opens
+/ai-vendor-register.yaml  @checkable-ai/reviewers
+/changes/                 @checkable-ai/reviewers
+
+# AI model use in services and Kubernetes manifests, read by the gate
+/service/                 @checkable-ai/reviewers
+/k8s/                     @checkable-ai/reviewers
+
+# Deployment to AWS
+/infra/                   @checkable-ai/reviewers
+
+# The gate's own files
+/.github/                 @checkable-ai/reviewers
+/scripts/                 @checkable-ai/reviewers
+/templates/               @checkable-ai/reviewers
+/feed-snapshot/           @checkable-ai/reviewers
+/tests/                   @checkable-ai/reviewers

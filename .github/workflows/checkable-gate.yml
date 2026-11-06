@@ -1,0 +1,49 @@
+name: Checkable gate
+
+# Looks up every AI tool a pull request adds or changes in ai-vendor-register.yaml, every AI model config in
+# service/**/model.yaml and every Kubernetes manifest under k8s/ that declares an AI vendor, plan or model.
+# It sets the checkable/sign-off status, red until a person adds the checkable-signed-off label. The gate code
+# and the feed snapshot come from the base commit, and the head files are read through the API, so no
+# pull request code runs. The job ends green once the status is posted: the status carries the result.
+#
+# This workflow handles a pull request being opened. checkable-sign-off.yml runs the same check on every
+# later event (new commits, reopen, label added or removed). The path split keeps the nightly's own pull
+# requests, which only add changes/<change_id>.md, from running the gate twice when they open: the nightly
+# posts the status and the gate comment on those itself, straight after opening them.
+on:
+  pull_request:
+    types: [opened]
+    branches: [main]
+    paths-ignore:
+      - "changes/**"
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  statuses: write
+
+concurrency:
+  group: checkable-gate-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - run: pip install -r scripts/requirements.txt
+      - env:
+          GITHUB_TOKEN: ${{ github.token }}
+          FEED_URL: ${{ vars.FEED_URL }}
+          # Optional: the org App's bot login, for example checkable-ai[bot], if it ever posts the gate comment.
+          CHECKABLE_BOT_LOGINS: ${{ vars.CHECKABLE_BOT_LOGINS }}
+        run: python -m scripts.checkable.gate

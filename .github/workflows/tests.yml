@@ -1,0 +1,36 @@
+name: Tests
+
+# The required `tests` check. It runs on every pull request with no path filter, the nightly's own pull
+# requests included (they are opened with the Checkable AI App token, so this workflow starts on them), so
+# a required check never waits for a run that will not come.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - run: pip install -r scripts/requirements-dev.txt
+      - run: python -m pytest -q
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "## Tests"
+            echo ""
+            echo "Unit tests for the Checkable Action code, every template and the summariser service, on Python 3.12."
+            echo "Result: ${{ job.status }}."
+          } >> "$GITHUB_STEP_SUMMARY"

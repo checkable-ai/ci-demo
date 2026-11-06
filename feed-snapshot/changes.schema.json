@@ -1,0 +1,649 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://checkableai.com/feed/demo/changes.schema.json",
+  "title": "Checkable AI CI demo feed",
+  "description": "Schema for the Checkable AI CI demo changes feed. Readers accept any 1.x.y of the schema URN and refuse any other major.",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "urn:checkable:feed:demo-changes:1.1.0"
+    },
+    "feed_id": {
+      "const": "checkable-demo"
+    },
+    "feed_version": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}\\.\\d+$"
+    },
+    "generated_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+    },
+    "publisher": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "const": "Checkable AI"
+        },
+        "url": {
+          "const": "https://checkableai.com/"
+        }
+      },
+      "required": [
+        "name",
+        "url"
+      ],
+      "additionalProperties": false
+    },
+    "terms": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "const": "https://checkableai.com/terms/"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "url",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "notice": {
+      "type": "string"
+    },
+    "plans": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+\\.[a-z0-9-]+\\.[a-z0-9-]+$"
+          },
+          "vendor": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "product": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "terms": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "url": {
+                  "type": "string",
+                  "pattern": "^https://[^\\s]+$"
+                }
+              },
+              "required": [
+                "title",
+                "url"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "rules": {
+            "type": "object",
+            "properties": {
+              "au": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "name": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "why": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "name",
+                    "why"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "eu": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "name": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "why": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "name",
+                    "why"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "us": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "name": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "why": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "name",
+                    "why"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "au",
+              "eu",
+              "us"
+            ],
+            "additionalProperties": false
+          },
+          "rules_reading": {
+            "type": "string",
+            "pattern": "^Checkable\\ AI's\\ reading\\ of\\ "
+          },
+          "review": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "enum": [
+                  "person_confirmed",
+                  "auto_needs_review"
+                ]
+              },
+              "reviewed_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 10
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "status",
+              "reviewed_at"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "vendor",
+          "product",
+          "name",
+          "terms",
+          "rules",
+          "rules_reading",
+          "review"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "change_id": {
+            "type": "string",
+            "pattern": "^chg_[a-z0-9-]+$"
+          },
+          "event_id": {
+            "type": "string",
+            "pattern": "^evt_[0-9A-HJKMNP-TV-Z]{26}$"
+          },
+          "event_type": {
+            "enum": [
+              "change.published",
+              "change.updated",
+              "change.corrected",
+              "change.withdrawn"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "supersedes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^evt_[0-9A-HJKMNP-TV-Z]{26}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "record_class": {
+            "enum": [
+              "observed_vendor_change",
+              "replayed_vendor_change",
+              "retrospective_reconstruction"
+            ]
+          },
+          "vendor": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 140
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 1200
+          },
+          "vendor_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "vendor_updated_on": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "vendor_updated_basis": {
+            "anyOf": [
+              {
+                "enum": [
+                  "stated_on_page",
+                  "page_metadata",
+                  "court_record",
+                  "archive_first_capture"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "detected_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "published_at": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+          },
+          "action": {
+            "type": "string"
+          },
+          "applicability": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "plan_id": {
+                  "type": "string"
+                },
+                "plan_name": {
+                  "type": "string"
+                },
+                "status": {
+                  "enum": [
+                    "affected",
+                    "not_affected",
+                    "under_investigation",
+                    "fixed"
+                  ]
+                },
+                "reason": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "plan_id",
+                "plan_name",
+                "status",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^ev_"
+                },
+                "url": {
+                  "type": "string",
+                  "pattern": "^https://[^\\s]+$"
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "published_on": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "quote": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 320
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "quote_policy": {
+                  "enum": [
+                    "verbatim",
+                    "link_and_paraphrase"
+                  ]
+                },
+                "our_reading": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "licence": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "enum": [
+                        "confirmed_reusable",
+                        "public_domain",
+                        "no_reuse_licence"
+                      ]
+                    },
+                    "name": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^https://[^\\s]+$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "attribution": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "read_on": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    "basis": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "name",
+                    "url",
+                    "attribution",
+                    "read_on",
+                    "basis"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "id",
+                "url",
+                "title",
+                "published_on",
+                "quote",
+                "quote_policy",
+                "our_reading",
+                "licence"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "licence": {
+            "type": "object",
+            "properties": {
+              "quotes": {
+                "enum": [
+                  "verbatim",
+                  "paraphrase_only",
+                  "mixed"
+                ]
+              }
+            },
+            "required": [
+              "quotes"
+            ],
+            "additionalProperties": false
+          },
+          "review": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "enum": [
+                  "person_confirmed",
+                  "auto_needs_review"
+                ]
+              },
+              "reviewed_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 10
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "status",
+              "reviewed_at"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "change_id",
+          "event_id",
+          "event_type",
+          "version",
+          "supersedes",
+          "record_class",
+          "vendor",
+          "products",
+          "title",
+          "summary",
+          "vendor_date",
+          "detected_at",
+          "published_at",
+          "action",
+          "applicability",
+          "evidence",
+          "licence",
+          "review"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema",
+    "feed_id",
+    "feed_version",
+    "generated_at",
+    "publisher",
+    "terms",
+    "notice",
+    "plans",
+    "changes"
+  ],
+  "additionalProperties": false
+}

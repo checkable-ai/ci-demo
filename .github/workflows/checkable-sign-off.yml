@@ -1,0 +1,41 @@
+name: Checkable sign-off
+
+# The same check as checkable-gate.yml, for every event after a pull request is opened: new commits,
+# reopen, and the checkable-signed-off label being added or removed. No path filter, so a label on the
+# nightly's pull requests (which only add changes/<change_id>.md) still turns checkable/sign-off green.
+on:
+  pull_request:
+    types: [synchronize, reopened, labeled, unlabeled]
+    branches: [main]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  statuses: write
+
+# Shared with checkable-gate.yml, so two events on one pull request are checked one after the other.
+concurrency:
+  group: checkable-gate-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  sign-off:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - run: pip install -r scripts/requirements.txt
+      - env:
+          GITHUB_TOKEN: ${{ github.token }}
+          FEED_URL: ${{ vars.FEED_URL }}
+          # Optional: the org App's bot login, for example checkable-ai[bot], if it ever posts the gate comment.
+          CHECKABLE_BOT_LOGINS: ${{ vars.CHECKABLE_BOT_LOGINS }}
+        run: python -m scripts.checkable.gate

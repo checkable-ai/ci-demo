@@ -51,7 +51,7 @@ Deploys have two holds after merge. `checkable/deploy-gate` blocks any commit wh
 
 ## The summariser service
 
-`service/summariser/` is a dummy internal service, a Python 3.12 Lambda handler on arm64 with 128 MB. `GET /health` returns the configured model. `POST /summarise` with `{"text": "..."}` returns a placeholder summary with the vendor, plan and model from `service/summariser/model.yaml`. It never calls an AI vendor. Since pull request #5, `model.yaml` names the register entry `openai-api`.
+`service/summariser/` is a dummy internal service, a Python 3.12 Lambda handler on arm64 with 128 MB. `GET /health` returns the configured model. `POST /summarise` with `{"text": "..."}` returns a placeholder summary with the vendor, plan and model from `service/summariser/model.yaml`. It never calls an AI vendor. Each pull request that changes `model.yaml` shows the move in the gate comment, and the merged plan is what production runs.
 
 The function has a public function URL and no reserved concurrency, so the account's concurrency limit caps it. `infra/README.md` lists every resource, the roles and the state bucket.
 

@@ -51,7 +51,7 @@ The job summary gives the URL, the model, the plan counts, the smoke test result
 
 These steps are applied for `checkable-ai/ci-demo`. They are the order for your own copy.
 
-0. Raise the Lambda concurrent executions quota in 726495711127 (Service Quotas, AWS Lambda, Concurrent executions). It was 10 on 6 Nov 2026, and Lambda keeps 10 unreserved, so the reservation of 2 fails until the quota is 12 or more. New accounts are usually raised to 1,000 on request at no charge. Until then, deploy with `reserved_concurrency = -1` (no reservation, the account limit of 10 caps it instead).
+0. Optional: to reserve concurrency for the function (`reserved_concurrency` above 0), the account's Lambda concurrency quota must be at least that many plus 10. The default `-1` reserves none, so the account limit caps the function.
 
 1. Create `checkable-ai/ci-demo` and read its id: `gh api repos/checkable-ai/ci-demo --jq .id`.
 2. Apply the roles stack (site repo, `infra/aws/github-oidc-ses`) with `-var github_repo_id=<id>`. It makes the plan and deploy roles and the permissions boundary.

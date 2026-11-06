@@ -19,7 +19,7 @@ Both roles are assumed through GitHub OIDC, so the repo holds no AWS key. They a
 
 Every resource carries `Project = checkable-ci-demo` through the provider's default tags. The provider refuses any account other than 726495711127. Output: `function_url`.
 
-State: S3 backend, key `checkable-ai/ci-demo/service.tfstate`, `use_lockfile = true` (Terraform 1.10 or later, no DynamoDB table). The bucket is not in the code: CI passes it with `-backend-config="bucket=$TF_STATE_BUCKET"` from the repo variable. It is the existing Checkable AI state bucket in the management account, named in the private infrastructure repo. Its bucket policy grants the two CI roles this one key and its lock file.
+State: S3 backend, key `checkable-ai/ci-demo/service.tfstate`, `use_lockfile = true` (Terraform 1.10 or later, no DynamoDB table). The bucket is not in the code: CI passes it with `-backend-config="bucket=$TF_STATE_BUCKET"` from the repo variable. It is a small private bucket in the same AWS account (versioned, encrypted, public access blocked). The plan role may read this one key and write its lock file, and the deploy role may read and write both.
 
 ## `terraform/plan`
 

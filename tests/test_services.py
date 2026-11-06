@@ -82,6 +82,45 @@ def test_switch_with_the_register_entry_added_waits_then_signs_off():
     assert res2.signed and res2.state == "success"
 
 
+def test_switch_back_to_a_registered_plan_shows_its_open_change_and_waits_for_a_person():
+    # The recorded scenario in docs/demo-script.md: after the OpenAI switch merged, a developer moves the
+    # summariser back to the Gemini API paid tier, which the register already lists.
+    reg = register_with(OPENAI_TOOL)
+    files = [(MODEL, "modified")]
+    api = FakeAPI(base_register=reg, head_register=reg, files=files, roles=dict(ROLES),
+                  file_map={MODEL: (OPENAI_MODEL, GEMINI_MODEL)})
+    res, api = run(None, files, api=api)
+    assert res.state == "failure" and res.description == gate.DESC_WAITING
+    assert "Before: vendor `OpenAI`, plan `openai.api.platform`, model `gpt-mini`" in res.body
+    assert "Register entry: `Gemini API (paid tier) (gemini-api-paid)`" in res.body
+    assert GEMINI in res.body and SERVICE_TIER not in res.body and "Not in the register" not in res.body
+    assert gate.DEPLOY_FILES_HEADLINE not in res.body  # the AI section carries the sign-off, not the deploy note
+    assert "Service or infrastructure files changed: `%s`" % MODEL in gate.summary_markdown(res, "opened")
+    api.labels.append(gate.LABEL)
+    res2, _ = run(None, files, action="labeled", sender="alice", api=api)
+    assert res2.signed and res2.state == "success" and res2.description == gate.DESC_SIGNED % "alice"
+
+
+def test_demo_script_scenario_on_the_real_register_snapshot_and_templates():
+    # Guards the gate output that docs/demo-script.md promises, against the files in this repo.
+    with open(os.path.join(ROOT, "ai-vendor-register.yaml"), encoding="utf-8") as f:
+        reg = f.read()
+    feed = F.load_feed(None, os.path.join(ROOT, "feed-snapshot", "changes.json"))
+    files = [(MODEL, "modified")]
+    api = FakeAPI(base_register=reg, head_register=reg, files=files, roles={"checkable-reviewer": "write"},
+                  file_map={MODEL: (OPENAI_MODEL, GEMINI_MODEL)})
+    res = gate.run_pr(api, feed, pr_number=6, action="opened", template_dir=REAL_TPL)
+    assert res.state == "failure" and res.description == gate.DESC_WAITING
+    assert "Register entry: `Gemini API (paid tier) (gemini-api-paid)`" in res.body
+    assert ("`%s` (version 1): Google turns request storage on by default for new Gemini API paid projects. "
+            "Reaches you." % GEMINI) in res.body
+    assert SERVICE_TIER not in res.body
+    api.labels.append(gate.LABEL)
+    res2 = gate.run_pr(api, feed, pr_number=6, action="labeled", sender_login="checkable-reviewer",
+                       sender_type="User", event_label=gate.LABEL, template_dir=REAL_TPL)
+    assert res2.state == "success" and res2.description == "Signed off by checkable-reviewer"
+
+
 def test_model_label_change_on_the_same_plan_needs_sign_off():
     head = GEMINI_MODEL.replace("model: gemini-flash", "model: gemini-pro")
     res, _ = run({MODEL: (GEMINI_MODEL, head)}, [(MODEL, "modified")])

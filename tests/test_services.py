@@ -112,8 +112,9 @@ def test_demo_script_scenario_on_the_real_register_snapshot_and_templates():
     res = gate.run_pr(api, feed, pr_number=6, action="opened", template_dir=REAL_TPL)
     assert res.state == "failure" and res.description == gate.DESC_WAITING
     assert "Register entry: `Gemini API (paid tier) (gemini-api-paid)`" in res.body
-    assert ("`%s` (version 1): Google turns request storage on by default for new Gemini API paid projects. "
-            "Reaches you." % GEMINI) in res.body
+    # Loose on version and title wording, so a feed snapshot refresh does not break the required tests check.
+    section = res.body[res.body.index("**Open vendor changes affecting this plan**"):]
+    assert GEMINI in section and "Reaches you" in section
     assert SERVICE_TIER not in res.body
     api.labels.append(gate.LABEL)
     res2 = gate.run_pr(api, feed, pr_number=6, action="labeled", sender_login="checkable-reviewer",

@@ -2,7 +2,7 @@
 **Checkable gate for pull request #{{pr_number}}**, commit `{{head_sha_short}}`, checked against {{feed_source}} (feed {{feed_version}}). Register: `{{register_path}}` of {{company_name}}{{#is_fictional}}, a fictional sample company{{/is_fictional}}{{^is_fictional}},{{/is_fictional}} operating in {{operates_in}}.
 
 {{#nothing_to_check}}
-**No AI tools changed.** This pull request leaves `{{register_path}}`, the AI model configs under `service/` and `k8s/`, the change records and the gate files alone, so the `checkable/sign-off` check is green with nothing to sign.
+**No AI tools changed.** This pull request leaves `{{register_path}}`, `service/`, `infra/`, the AI model configs under `k8s/`, the change records and the gate files alone, so the `checkable/sign-off` check is green with nothing to sign.
 {{/nothing_to_check}}
 {{^nothing_to_check}}
 {{#has_unregistered}}
@@ -25,6 +25,14 @@
 {{/gate_files}}
 
 {{/has_gate_files}}
+{{#has_deploy_only}}
+**Service or infrastructure files changed. A person signs this off before they deploy.** No AI tool or model config changed, but these files reach production, and the deploy job runs only after a sign-off.
+
+{{#deploy_files}}
+- `{{path}}`
+{{/deploy_files}}
+
+{{/has_deploy_only}}
 {{#tools}}
 ### {{tool_name}} ({{change_kind}})
 

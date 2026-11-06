@@ -35,6 +35,11 @@ SIGNER_ROLES = {"admin", "maintain", "write"}
 # Files the gate runs from or checks against. A change to any of them needs the same sign-off.
 GATE_PATH_PREFIXES = ("feed-snapshot/", "scripts/", "templates/", "tests/", ".github/")
 GATE_FILES_HEADLINE = "Gate files changed. A person signs this off."
+# Files that reach production through deploy.yml. A pull request that changes only these, and no AI tool or model
+# config, still needs a person to sign it off, because the deploy job runs only after a sign-off. k8s/ is checked on
+# a throwaway kind cluster and never deployed, so it is not on this list.
+DEPLOY_PATH_PREFIXES = ("infra/", "service/")
+DEPLOY_FILES_HEADLINE = "Service or infrastructure files changed. A person signs this off before they deploy."
 _MARKER_RE = re.compile(
     r"^<!-- checkable-gate v1(?: signed:([0-9a-f]{7,40}) by:(\S+) at:(\S+))? -->")
 
@@ -267,12 +272,25 @@ def gate_files_changed(files):
     return sorted(out)
 
 
+def deploy_files_changed(files):
+    """Every service or infra path a pull request adds, edits, renames or removes, sorted."""
+    out = set()
+    for f in files:
+        for name in (f.get("filename"), f.get("previous_filename")):
+            if isinstance(name, str) and name.startswith(DEPLOY_PATH_PREFIXES):
+                out.add(name)
+    return sorted(out)
+
+
 def _fallback_lines(body, template_names, ctx):
     """Add one fixed line only when the template has no place for a case it must be able to show."""
     extra = []
     if ctx.get("has_gate_files") and "has_gate_files" not in template_names:
         extra.append(GATE_FILES_HEADLINE + " Changed: "
                      + ", ".join("`%s`" % g["path"] for g in ctx["gate_files"]) + ".")
+    if ctx.get("has_deploy_only") and "has_deploy_only" not in template_names:
+        extra.append(DEPLOY_FILES_HEADLINE + " Changed: "
+                     + ", ".join("`%s`" % g["path"] for g in ctx["deploy_files"]) + ".")
     if ctx.get("register_error") and "register_error" not in template_names:
         extra.append("Register problem: " + code_register(ctx["register_error"])
                      + ". Fix the register first. The label cannot turn this check green while it does not parse.")
@@ -339,6 +357,7 @@ def run_pr(api, feed, *, repo=DEFAULT_REPO, pr_number, action, sender_login=None
             record_ids.append(name[len("changes/"):-3])
 
     gate_files = [{"path": plain_register(n)} for n in gate_files_changed(files)]
+    deploy_files = [{"path": plain_register(n)} for n in deploy_files_changed(files)]
 
     plans_by_id = {p["id"]: p for p in feed.plans}
     titles = {c["change_id"]: clean_feed(c["title"]) for c in feed.changes}
@@ -369,8 +388,9 @@ def run_pr(api, feed, *, repo=DEFAULT_REPO, pr_number, action, sender_login=None
     tools += svc_tools
     rows += svc_rows
 
-    nothing = not (tools or removed_tools or change_records or register_error or gate_files
-                   or removed_services or service_errors)
+    other_reasons = bool(tools or removed_tools or change_records or register_error or gate_files
+                         or removed_services or service_errors)
+    nothing = not (other_reasons or deploy_files)
     needs = not nothing
     can_sign = not (register_error or unregistered or service_errors)
 
@@ -411,6 +431,8 @@ def run_pr(api, feed, *, repo=DEFAULT_REPO, pr_number, action, sender_login=None
         "service_errors": service_errors,
         "has_gate_files": bool(gate_files),
         "gate_files": gate_files,
+        "has_deploy_only": bool(deploy_files) and not other_reasons,
+        "deploy_files": deploy_files,
         "nothing_to_check": nothing,
         "needs_sign_off": needs and not signed,
         "signed_off": signed,
@@ -464,6 +486,7 @@ def run_pr(api, feed, *, repo=DEFAULT_REPO, pr_number, action, sender_login=None
     return GateResult(state=state, description=desc, body=body, needs_sign_off=needs, signed=signed,
                       exit_code=1 if (is_fork and needs) else 0, head_sha=head_sha, cleared=cleared,
                       rows=rows, gate_files=[g["path"] for g in gate_files], record_ids=record_ids,
+                      deploy_files=[g["path"] for g in deploy_files],
                       service_errors=service_errors, pr_number=pr_number, feed_version=feed.version,
                       feed_source=feed.source_label)
 
@@ -497,9 +520,12 @@ def summary_markdown(res, action=None, is_fork=False):
         lines += ["", "Change records: " + ", ".join("`changes/%s.md`" % plain_register(c) for c in res.record_ids)]
     if res.gate_files:
         lines += ["", "Gate files changed: " + ", ".join("`%s`" % g for g in res.gate_files)]
+    deploy_files = getattr(res, "deploy_files", None) or []
+    if deploy_files:
+        lines += ["", "Service or infrastructure files changed: " + ", ".join("`%s`" % g for g in deploy_files)]
     for e in res.service_errors:
         lines += ["", "Config problem in `%s`: %s" % (e["path"], e["error"])]
-    if not (res.rows or res.record_ids or res.gate_files or res.service_errors):
+    if not (res.rows or res.record_ids or res.gate_files or deploy_files or res.service_errors):
         lines += ["", "Nothing the gate guards changed."]
     if is_fork:
         lines += ["", "### Gate comment", "", res.body]

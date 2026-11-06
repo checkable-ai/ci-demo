@@ -90,9 +90,35 @@ def test_model_label_change_on_the_same_plan_needs_sign_off():
     assert GEMINI in res.body
 
 
-def test_comment_only_edit_to_model_yaml_is_green():
+def test_comment_only_edit_to_model_yaml_still_needs_a_person():
+    # No AI use changed, but service/ deploys to production, so a person signs it off (deploy_gate.py needs it).
     head = "# a new comment\n" + GEMINI_MODEL
     res, api = run({MODEL: (GEMINI_MODEL, head)}, [(MODEL, "modified")])
+    assert res.state == "failure" and res.description == gate.DESC_WAITING
+    assert gate.DEPLOY_FILES_HEADLINE in res.body and "`service/summariser/model.yaml`" in res.body
+
+
+@pytest.mark.parametrize("path", ["service/summariser/handler.py", "infra/service/main.tf", "infra/scripts/smoke.py"])
+def test_deploy_only_change_needs_a_person_and_the_label_signs_it(path):
+    res, api = run({}, [(path, "modified")], tpl=REAL_TPL)
+    assert res.state == "failure" and res.description == gate.DESC_WAITING
+    assert "**Service or infrastructure files changed. A person signs this off before they deploy.**" in res.body
+    assert "`%s`" % path in res.body and "No AI tools changed" not in res.body
+    summary = gate.summary_markdown(res, "opened")
+    assert "Service or infrastructure files changed: `%s`" % path in summary
+    assert "Nothing the gate guards changed." not in summary
+    api.labels.append(gate.LABEL)
+    res2, _ = run(None, [(path, "modified")], tpl=REAL_TPL, action="labeled", sender="alice", api=api)
+    assert res2.state == "success" and res2.description == gate.DESC_SIGNED % "alice"
+
+
+def test_deploy_headline_is_not_added_when_ai_use_changed():
+    res, _ = run({MODEL: (GEMINI_MODEL, OPENAI_MODEL)}, [(MODEL, "modified")], tpl=REAL_TPL)
+    assert res.description == gate.DESC_UNREGISTERED and gate.DEPLOY_FILES_HEADLINE not in res.body
+
+
+def test_docs_only_change_is_still_green():
+    res, _ = run({}, [("README.md", "modified")], tpl=REAL_TPL)
     assert res.state == "success" and res.description == gate.DESC_NOTHING
 
 

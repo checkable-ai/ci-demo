@@ -1,14 +1,31 @@
-# Checkable AI CI demo
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/img/hero-dark.svg">
+    <img src="docs/img/hero-light.svg" width="100%" alt="Checkable AI CI demo. Your AI vendors change the rules every week. This pipeline catches it before your code ships. Four steps: vendor change, pull request, named sign-off, deploy.">
+  </picture>
+</p>
 
-**Your AI vendors change the rules every week. This pipeline catches it before your code ships.**
+<p align="center">
+  <a href="https://github.com/checkable-ai/ci-demo/actions/workflows/tests.yml"><img src="https://github.com/checkable-ai/ci-demo/actions/workflows/tests.yml/badge.svg?branch=main" alt="tests workflow status"></a>
+  <img src="https://img.shields.io/badge/runs%20on-GitHub%20Actions-8f3a2b" alt="runs on GitHub Actions">
+  <img src="https://img.shields.io/badge/feed%20snapshot-5%20changes%2C%207%20plans-8f3a2b" alt="feed snapshot: 5 changes, 7 plans">
+  <img src="https://img.shields.io/badge/sample%20company-fictional-5f5753" alt="sample company: fictional">
+  <img src="https://img.shields.io/badge/service-Python%203.12-5f5753" alt="service: Python 3.12">
+</p>
+
+<p align="center">
+  <a href="https://checkableai.com/developers/ci-demo/"><strong>Walkthrough and recording</strong></a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://checkableai.com/enquire/"><strong>Make an enquiry</strong></a>
+</p>
 
 A vendor flips a default overnight. A developer points a service at a new AI plan on a Friday. Nobody reads the
 terms, nobody checks the law, and six months later nobody can say who accepted the risk. This repository closes that
 gap where your engineers already work: the pull request.
 
-It runs for Risky Business Solutions, a fictional company. Every name, team and seat count is made up; the vendor
-changes, quotes, terms links and rules are real, taken from the Checkable feed. The walkthrough, the recording and the
-technical steps are at https://checkableai.com/developers/ci-demo/.
+> [!NOTE]
+> The demo runs for **Risky Business Solutions**, a fictional company. Every name, team and seat count is made up.
+> The vendor changes, quotes, terms links and rules are real, taken from the Checkable feed.
 
 ## The problem it solves
 
@@ -22,6 +39,20 @@ technical steps are at https://checkableai.com/developers/ci-demo/.
 
 ## What the demo shows
 
+```mermaid
+flowchart LR
+    feed[("Checkable feed")]
+    nightly["1. Nightly check"]
+    pr["2. Pull request with the vendor's words"]
+    gate["3. Gate comment: terms, AU, EU, US rules"]
+    signoff{"Named sign-off?"}
+    deploy["4. Deploy gate, reviewer, smoke test"]
+    record["Record stays on the pull request"]
+    feed --> nightly --> pr --> gate --> signoff
+    signoff -- "Yes" --> deploy --> record
+    signoff -- "No" --> hold["Nothing merges"]
+```
+
 1. **A change arrives.** Each night the check reads the Checkable feed. When a vendor change reaches a tool in the AI
    register, it opens a pull request that morning, with the vendor's own words and an email alert to the owner.
 2. **A person decides.** Any pull request that touches an AI tool, a model config or a Kubernetes manifest gets one
@@ -32,8 +63,9 @@ technical steps are at https://checkableai.com/developers/ci-demo/.
 4. **The record stays.** The change, the source, the decision, the name and the date live on the pull request for
    good.
 
-It runs on GitHub-hosted runners and in your own cloud account. There is no Checkable server in the path and no API
-key to look after.
+> [!TIP]
+> It runs on GitHub-hosted runners and in your own cloud account. There is no Checkable server in the path and no
+> API key to look after.
 
 ## Free sample, full feed
 
@@ -50,10 +82,18 @@ The full feed is the same check, pointed at everything we track:
 | Where alerts go | Pull requests and email | Also Jira, ServiceNow, Teams and Slack |
 | Set-up | You wire it in from this README | Our engineers fit it to your stack after a short assessment |
 
-Keeping a live feed right takes research every day and a person to confirm what changed, so the full feed is a paid
-service. Make an enquiry at https://checkableai.com/enquire/ and tell us where your team works.
+> [!IMPORTANT]
+> Keeping a live feed right takes research every day and a person to confirm what changed, so the full feed is a
+> paid service. **[Make an enquiry](https://checkableai.com/enquire/)** and tell us where your team works.
 
-## How it is built
+## Under the hood
+
+The walkthrough, the recording and the technical steps are at https://checkableai.com/developers/ci-demo/, and
+`docs/demo-script.md` walks through a full run step by step, including the recorded scenario. The sections below
+hold the detail.
+
+<details>
+<summary><strong>How it is built</strong>: the four flows and the required checks</summary>
 
 | Flow | Runs from | What it does |
 |---|---|---|
@@ -64,10 +104,6 @@ service. Make an enquiry at https://checkableai.com/enquire/ and tell us where y
 
 A pull request that changes `service/` or `infra/` needs a sign-off even when no AI plan changed, because those files
 reach production. A pull request that touches nothing the gate guards goes green straight away.
-
-`docs/demo-script.md` walks through a full run step by step, including the recorded scenario.
-
-## Required checks
 
 The ruleset on `main` requires a pull request and these four checks:
 
@@ -83,7 +119,10 @@ Each one reports on every pull request, so nothing waits on a check that never s
 environment waits for a member of `@checkable-ai/reviewers`. The deploy role trusts only that environment through
 GitHub OIDC, so the repository holds no cloud keys.
 
-## Install it in your repository
+</details>
+
+<details>
+<summary><strong>Install it in your repository</strong>: ten steps, from copying the workflows to the ruleset</summary>
 
 1. Copy `.github/workflows/`, `.github/CODEOWNERS`, `scripts/`, `templates/` and `feed-snapshot/`.
 2. Add `ai-vendor-register.yaml` at the root, one entry per AI tool with the feed's `plan` id, and an empty
@@ -97,14 +136,17 @@ GitHub OIDC, so the repository holds no cloud keys.
 5. Keep default workflow permissions at read. Without the App, also tick "Allow GitHub Actions to create and approve
    pull requests".
 6. Create the labels, or let the first run do it:
+
    ```sh
    gh label create ai-governance --color 0e8a16 --description "A vendor change from the Checkable feed"
    gh label create checkable-signed-off --color 1d76db --description "A person read the Checkable gate comment and signed this off"
    ```
+
 7. Set `FEED_URL` to the feed address we give you. Until then every check reads `feed-snapshot/changes.json`.
 8. Email is optional and sends from your own AWS account through Amazon SES. Add the GitHub OIDC provider
    (`token.actions.githubusercontent.com`, audience `sts.amazonaws.com`) and a role that trusts only your
    repository's `main` branch, with this policy and nothing else:
+
    ```json
    {
      "Version": "2012-10-17",
@@ -120,6 +162,7 @@ GitHub OIDC, so the repository holds no cloud keys.
      }]
    }
    ```
+
    Store the role as `AWS_ROLE_ARN`, set `ALERT_TO`, `ALERT_FROM` and `AWS_REGION`, and put the same addresses in
    `ALLOWED_TO` and `ALLOWED_FROM` at the top of `scripts/checkable/alert.py`, which checks them again before
    sending. Without a role, the emails go to the job summary.
@@ -131,7 +174,10 @@ GitHub OIDC, so the repository holds no cloud keys.
 Want it fitted for you instead? Our engineers set it up for your stack after a short assessment:
 https://checkableai.com/enquire/
 
-## Settings
+</details>
+
+<details>
+<summary><strong>Settings</strong>: secrets and variables the workflows read</summary>
 
 | Setting | Purpose |
 |---|---|
@@ -146,7 +192,10 @@ Each alert subject ends with its pull request number, for example "(PR #4)", so 
 own thread. GitHub pauses scheduled workflows after 60 days without a commit, so refresh
 `feed-snapshot/changes.json` monthly to keep the nightly check running.
 
-## How the gate reads a pull request
+</details>
+
+<details>
+<summary><strong>How the gate reads a pull request</strong>: matching, sign-off and the Kubernetes annotations</summary>
 
 The gate code and the feed come from the base commit, and the pull request's files are read through the GitHub API,
 so nothing from the pull request runs. Each changed tool or config is matched to the feed by plan id, or by vendor
@@ -167,16 +216,19 @@ Kubernetes manifests declare AI use with these annotations, or the same names as
 | `checkable.ai/model` | `CHECKABLE_AI_MODEL` |
 | `checkable.ai/register-tool` | `CHECKABLE_AI_REGISTER_TOOL` |
 
-## The sample service
+</details>
+
+<details>
+<summary><strong>The sample service and the tests</strong></summary>
 
 `service/summariser/` is a small internal service, a Python 3.12 function with `GET /health` and `POST /summarise`.
 It answers with a placeholder summary and the vendor, plan and model from `model.yaml`, and never calls an AI vendor,
 so it costs next to nothing to run. `infra/README.md` lists every resource it creates.
 
-## Tests
-
 `pip install -r scripts/requirements-dev.txt`, then `python -m pytest`. The tests cover the Action code, every
 template, the deploy gate, the Kubernetes policy and the service.
+
+</details>
 
 ## About the feed snapshot
 
@@ -185,5 +237,11 @@ the AU, EU and US rule codes from our knowledge bases, and each change carries i
 only where the source's licence allows it, and the licence is named on the quote. Otherwise the entry gives our
 reading and the link. The rules and readings are Checkable AI's reading, not legal advice, so confirm them with your
 adviser.
+
+<p align="center">
+  <a href="https://checkableai.com/developers/ci-demo/"><strong>Read the walkthrough</strong></a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://checkableai.com/enquire/"><strong>Make an enquiry</strong></a>
+</p>
 
 Copyright Checkable AI. All rights reserved. Vendor quotes stay under their own licence, named on each quote.

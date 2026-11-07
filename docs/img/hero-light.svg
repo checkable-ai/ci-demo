@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" width="1280" height="400" role="img" aria-labelledby="t d">
+<title id="t">Checkable AI CI demo. Your AI vendors change the rules every week. This pipeline catches it before your code ships.</title>
+<desc id="d">Four steps: a vendor change arrives, a pull request opens, a named person signs it off, then the deploy runs.</desc>
+<rect width="1280" height="400" fill="#fbfaf8"/>
+<g transform="translate(930 20) scale(4.6)" fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0.07"><path d="M47.6 16.4A22 22 0 1 0 47.6 47.6" stroke="#1d1a19"/><path d="M26 31l9 9 22-26" stroke="#8f3a2b"/></g>
+<g transform="translate(56 40) scale(0.9)" fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="1.0"><path d="M47.6 16.4A22 22 0 1 0 47.6 47.6" stroke="#1d1a19"/><path d="M26 31l9 9 22-26" stroke="#8f3a2b"/></g>
+<text x="128" y="79" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="24" font-weight="600" fill="#1d1a19">Checkable AI</text>
+<text x="286" y="79" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f5753">Developers</text>
+<text x="56" y="160" font-family="Georgia, 'Times New Roman', serif" font-size="60" fill="#1d1a19">Checkable AI CI demo</text>
+<text x="56" y="212" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="27" fill="#5f5753">Your AI vendors change the rules every week.</text>
+<text x="56" y="250" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="27" font-weight="600" fill="#1d1a19">This pipeline catches it before your code ships.</text>
+<rect x="56" y="296" width="258" height="72" rx="14" fill="#ffffff" stroke="#ddd3ce" stroke-width="2"/>
+<circle cx="92" cy="332.0" r="19" fill="#8f3a2b"/>
+<text x="92" y="340.0" text-anchor="middle" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#ffffff">1</text>
+<text x="124" y="341.0" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="25" font-weight="600" fill="#1d1a19">Vendor change</text>
+<path d="M322 332.0 H352 M342 324.0 L352 332.0 L342 340.0" fill="none" stroke="#5f5753" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="360" y="296" width="258" height="72" rx="14" fill="#ffffff" stroke="#ddd3ce" stroke-width="2"/>
+<circle cx="396" cy="332.0" r="19" fill="#8f3a2b"/>
+<text x="396" y="340.0" text-anchor="middle" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#ffffff">2</text>
+<text x="428" y="341.0" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="25" font-weight="600" fill="#1d1a19">Pull request</text>
+<path d="M626 332.0 H656 M646 324.0 L656 332.0 L646 340.0" fill="none" stroke="#5f5753" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="664" y="296" width="258" height="72" rx="14" fill="#ffffff" stroke="#ddd3ce" stroke-width="2"/>
+<circle cx="700" cy="332.0" r="19" fill="#8f3a2b"/>
+<text x="700" y="340.0" text-anchor="middle" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#ffffff">3</text>
+<text x="732" y="341.0" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="25" font-weight="600" fill="#1d1a19">Named sign-off</text>
+<path d="M930 332.0 H960 M950 324.0 L960 332.0 L950 340.0" fill="none" stroke="#5f5753" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="968" y="296" width="258" height="72" rx="14" fill="#ffffff" stroke="#ddd3ce" stroke-width="2"/>
+<circle cx="1004" cy="332.0" r="19" fill="#8f3a2b"/>
+<text x="1004" y="340.0" text-anchor="middle" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#ffffff">4</text>
+<text x="1036" y="341.0" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="25" font-weight="600" fill="#1d1a19">Deploy</text>
+<path d="M1178 332.0 l9 9 l18 -20" fill="none" stroke="#2f6b3a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

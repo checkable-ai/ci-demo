@@ -1,8 +1,8 @@
 # Checkable AI CI demo
 
-This repository shows the Checkable feed working inside a company's own GitHub pipeline, from a vendor change in the morning to a signed-off deploy on AWS. The walkthrough and recording are at https://checkableai.com/developers/ci-demo/.
+This repository shows the Checkable feed working inside a company's own GitHub pipeline, from a vendor change in the morning to a signed-off deploy on AWS. The walkthrough is at https://checkableai.com/developers/ci-demo/ and the nine technical steps at https://checkableai.com/developers/ci-demo/technical/.
 
-The repository belongs to Example Bay Advisory, a fictional sample company. It holds the company's AI vendor register, a small internal service that uses one of those AI plans, and the GitHub Actions that check both and deploy the service. Every name, seat count and team here is made up. The vendor changes, quotes, terms links and rules are real, taken from the Checkable feed.
+The repository belongs to Risky Business Solutions, a fictional sample company. It holds the company's AI vendor register, a small internal service that uses one of those AI plans, and the GitHub Actions that check both and deploy the service. Every name, seat count and team here is made up. The vendor changes, quotes, terms links and rules are real, taken from the Checkable feed.
 
 What it shows:
 

@@ -42,15 +42,15 @@ gap where your engineers already work: the pull request.
 ```mermaid
 flowchart LR
     feed[("Checkable feed")]
-    nightly["1. Nightly check"]
-    pr["2. Pull request with the vendor's words"]
-    gate["3. Gate comment: terms, AU, EU, US rules"]
+    nightly["Step 1: nightly check"]
+    pr["Step 2: pull request with the vendor's words"]
+    gate["Step 3: gate comment with terms and AU, EU, US rules"]
     signoff{"Named sign-off?"}
-    deploy["4. Deploy gate, reviewer, smoke test"]
+    deploy["Step 4: deploy gate, reviewer, smoke test"]
     record["Record stays on the pull request"]
     feed --> nightly --> pr --> gate --> signoff
     signoff -- "Yes" --> deploy --> record
-    signoff -- "No" --> hold["Nothing merges"]
+    signoff -- "No" --> hold["Holds for sign-off"]
 ```
 
 1. **A change arrives.** Each night the check reads the Checkable feed. When a vendor change reaches a tool in the AI

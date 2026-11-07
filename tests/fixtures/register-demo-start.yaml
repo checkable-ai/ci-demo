@@ -1,7 +1,7 @@
-# AI vendor register for Example Bay Advisory, a fictional sample company.
+# AI vendor register for Risky Business Solutions, a fictional sample company.
 # Every name, team and number in this file is made up for the Checkable AI CI demo.
 # Add or change a tool in a pull request. The Checkable gate looks it up in the feed and waits for a person to sign it off.
-organisation: Example Bay Advisory
+organisation: Risky Business Solutions
 fictional: true
 operates_in: [AU, EU, US]
 last_checked: 2026-11-06

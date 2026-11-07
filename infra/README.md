@@ -1,6 +1,6 @@
 # Flow 3: CI/CD into AWS
 
-`infra/service/` is the Terraform for the summariser service of Example Bay Advisory (a fictional sample company): one AWS Lambda function with a public function URL, in member account 726495711127, region `ap-southeast-2`. Two workflows run it.
+`infra/service/` is the Terraform for the summariser service of Risky Business Solutions (a fictional sample company): one AWS Lambda function with a public function URL, in member account 726495711127, region `ap-southeast-2`. Two workflows run it.
 
 | Workflow | Job (check name) | When | AWS role |
 | --- | --- | --- | --- |

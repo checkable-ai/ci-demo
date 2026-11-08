@@ -1,4 +1,4 @@
-# The summariser service of Example Bay Advisory (a fictional sample company) on AWS Lambda, for the Checkable AI
+# The summariser service of Risky Business Solutions (a fictional sample company) on AWS Lambda, for the Checkable AI
 # CI demo. Member account 726495711127, ap-southeast-2.
 #
 # In CI the deploy and plan jobs assume their role through GitHub OIDC (aws-actions/configure-aws-credentials), so

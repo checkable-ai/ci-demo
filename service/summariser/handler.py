@@ -1,4 +1,4 @@
-"""Summariser service of Example Bay Advisory, a fictional sample company. AWS Lambda, Python 3.12.
+"""Summariser service of Risky Business Solutions, a fictional sample company. AWS Lambda, Python 3.12.
 
 A dummy internal service for the Checkable AI CI demo. It answers two routes behind an API Gateway HTTP API
 (payload format 2.0) or a Lambda function URL:

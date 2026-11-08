@@ -17,7 +17,7 @@ import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DEFAULT_MODEL_FILE = os.path.join(ROOT, "service", "summariser", "model.yaml")
-SAMPLE = ("Example Bay Advisory met the client on Tuesday to review the quarterly cash flow. "
+SAMPLE = ("Risky Business Solutions met the client on Tuesday to review the quarterly cash flow. "
           "The client agreed to move two invoices to the next quarter.")
 ATTEMPTS = 12
 WAIT_SECONDS = 5

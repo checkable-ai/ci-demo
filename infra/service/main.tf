@@ -60,7 +60,7 @@ resource "aws_iam_role_policy" "logs" {
 
 resource "aws_lambda_function" "summariser" {
   function_name                  = var.function_name
-  description                    = "Example Bay Advisory summariser (fictional). Dummy summaries, no AI vendor call."
+  description                    = "Risky Business Solutions summariser (fictional). Dummy summaries, no AI vendor call."
   role                           = aws_iam_role.exec.arn
   runtime                        = "python3.12"
   architectures                  = ["arm64"]

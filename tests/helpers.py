@@ -116,7 +116,7 @@ def make_feed(data=None, label="the feed snapshot in this repo (feed-snapshot/ch
 
 
 REGISTER_TEXT = """\
-organisation: Example Bay Advisory
+organisation: Risky Business Solutions
 fictional: true
 operates_in: [AU, EU, US]
 tools:

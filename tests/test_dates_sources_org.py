@@ -149,8 +149,8 @@ def test_snapshot_renders_have_no_repeated_source_line(name):
 # ---- 4: organisation and the fictional phrase come from the register ------------------------------
 
 def test_organisation_context():
-    assert organisation_context({"organisation": "Example Bay Advisory", "fictional": True}) == \
-        {"company_name": "Example Bay Advisory", "is_fictional": True}
+    assert organisation_context({"organisation": "Risky Business Solutions", "fictional": True}) == \
+        {"company_name": "Risky Business Solutions", "is_fictional": True}
     assert organisation_context({"organisation": "Acme Legal"}) == {"company_name": "Acme Legal", "is_fictional": False}
     assert organisation_context({"organisation": "Acme", "fictional": "yes"})["is_fictional"] is False
     assert organisation_context({}) == {"company_name": FALLBACK_ORGANISATION, "is_fictional": False}
@@ -158,7 +158,7 @@ def test_organisation_context():
     assert organisation_context({"organisation": "@team `x`\nY"})["company_name"] == "@ team x Y"
 
 
-REAL_REGISTER = register_with(replace={"organisation: Example Bay Advisory\nfictional: true\n":
+REAL_REGISTER = register_with(replace={"organisation: Risky Business Solutions\nfictional: true\n":
                                        "organisation: Acme Legal\nfictional: false\n"})
 NO_FLAG_REGISTER = register_with(replace={"fictional: true\n": ""})
 
@@ -170,14 +170,14 @@ def test_fictional_phrase_only_when_the_register_says_so(name, which):
     out = _render(_ctx(demo_feed(), GH, register_text), name)
     assert "fictional" not in out and "made up" not in out
     if name != "update-comment":
-        assert ("Acme Legal" if which == "fictional_false" else "Example Bay Advisory") in out
+        assert ("Acme Legal" if which == "fictional_false" else "Risky Business Solutions") in out
 
 
 @pytest.mark.parametrize("name", CHANGE_TEMPLATES)
 def test_fictional_phrase_kept_for_the_demo_register(name):
     out = _render(_ctx(demo_feed(), GH), name)
     if name != "update-comment":
-        assert "Example Bay Advisory, a fictional sample company" in out
+        assert "Risky Business Solutions, a fictional sample company" in out
 
 
 def test_pr_body_sentence_reads_cleanly_for_a_real_register():
@@ -190,34 +190,34 @@ def test_gate_comment_takes_the_organisation_from_the_base_register():
     files = [("ai-vendor-register.yaml", "modified")]
     api = FakeAPI(base_register=REGISTER_TEXT, head_register=register_with(extra), files=files)
     body = gate.run_pr(api, make_feed(), pr_number=4, action="opened", template_dir=template_dir()).body
-    assert "of Example Bay Advisory, a fictional sample company operating in AU, EU, US." in body
+    assert "of Risky Business Solutions, a fictional sample company operating in AU, EU, US." in body
 
     api = FakeAPI(base_register=REAL_REGISTER, head_register=REAL_REGISTER + extra, files=files)
     body = gate.run_pr(api, make_feed(), pr_number=4, action="opened", template_dir=template_dir()).body
     assert "of Acme Legal, operating in AU, EU, US." in body and "fictional" not in body
 
     # a pull request cannot rename the organisation in the gate comment while main names one
-    renamed = register_with(extra, replace={"organisation: Example Bay Advisory": "organisation: Someone Else"})
+    renamed = register_with(extra, replace={"organisation: Risky Business Solutions": "organisation: Someone Else"})
     api = FakeAPI(base_register=REGISTER_TEXT, head_register=renamed, files=files)
     body = gate.run_pr(api, make_feed(), pr_number=4, action="opened", template_dir=template_dir()).body
-    assert "Someone Else" not in body and "Example Bay Advisory" in body
+    assert "Someone Else" not in body and "Risky Business Solutions" in body
 
 
 def test_register_rejects_odd_organisation_or_fictional_values():
     with pytest.raises(RegisterError):
-        parse_register(register_with(replace={"organisation: Example Bay Advisory": "organisation: [a, b]"}))
+        parse_register(register_with(replace={"organisation: Risky Business Solutions": "organisation: [a, b]"}))
     with pytest.raises(RegisterError):
         parse_register(register_with(replace={"fictional: true": "fictional: maybe"}))
 
 
 def test_demo_register_is_marked_fictional():
     _, reg = _snapshot_and_register()
-    assert reg["organisation"] == "Example Bay Advisory" and reg["fictional"] is True
+    assert reg["organisation"] == "Risky Business Solutions" and reg["fictional"] is True
 
 
 def test_no_template_or_module_hardcodes_the_company():
     for name in CHANGE_TEMPLATES + ("gate-comment",):
         stripped = _tpl(name).replace("{{#is_fictional}}, a fictional sample company", "")
-        assert "fictional sample company" not in stripped and "Example Bay" not in stripped, name
+        assert "fictional sample company" not in stripped and "Risky Business" not in stripped, name
     import scripts.checkable.changectx as cc
     assert not hasattr(cc, "COMPANY_NAME")

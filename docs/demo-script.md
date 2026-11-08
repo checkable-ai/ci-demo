@@ -1,6 +1,6 @@
 # Demo script
 
-This script runs the Checkable AI CI demo in `checkable-ai/ci-demo`. Every company name, seat and team in it belongs to Example Bay Advisory, a fictional sample company. The vendor changes come from `feed-snapshot/changes.json`, feed version 2026-11-06.4.
+This script runs the Checkable AI CI demo in `checkable-ai/ci-demo`. Every company name, seat and team in it belongs to Risky Business Solutions, a fictional sample company. The vendor changes come from `feed-snapshot/changes.json`, feed version 2026-11-06.4.
 
 Each step names what you do, what you see and the check that shows it. The first part is the scenario we record. The second part walks through the same checks from the register as first published.
 

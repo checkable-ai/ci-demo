@@ -96,8 +96,7 @@ def test_nightly_email_settings():
     alert = workflow("checkable-nightly.yml")["jobs"]["alert"]
     assert alert["permissions"] == {"contents": "read", "id-token": "write"}
     assert "hello+feed-test@checkableai.com" in alert["env"]["ALERT_TO"]
-    assert "arn:aws:iam::REDACTED-ACCOUNT-ID:role/checkable-ci-demo-ses" in alert["env"]["AWS_ROLE_ARN"]
-    assert "github.repository == 'checkable-ai/ci-demo'" in alert["env"]["AWS_ROLE_ARN"]
+    assert alert["env"]["AWS_ROLE_ARN"] == "${{ secrets.AWS_ROLE_ARN }}"
 
 
 def test_nightly_sync_job_can_create_labels():

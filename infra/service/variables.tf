@@ -4,9 +4,8 @@ variable "region" {
 }
 
 variable "account_id" {
-  description = "The member account the service runs in. The provider refuses any other account."
+  description = "The member account the service runs in. The provider refuses any other account. CI sets it as TF_VAR_account_id from the AWS_ACCOUNT_ID repo variable."
   type        = string
-  default     = "REDACTED-ACCOUNT-ID"
 }
 
 variable "assume_role_arn" {

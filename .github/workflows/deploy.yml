@@ -40,6 +40,7 @@ env:
   TF_IN_AUTOMATION: "1"
   TF_INPUT: "0"
   TF_DIR: infra/service
+  TF_VAR_account_id: ${{ vars.AWS_ACCOUNT_ID }}
 
 jobs:
   deploy-gate:

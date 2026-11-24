@@ -1,9 +1,9 @@
 # The summariser service of Risky Business Solutions (a fictional sample company) on AWS Lambda, for the Checkable AI
-# CI demo. Member account REDACTED-ACCOUNT-ID, ap-southeast-2.
+# CI demo. A dedicated member account (TF_VAR_account_id), ap-southeast-2.
 #
 # In CI the deploy and plan jobs assume their role through GitHub OIDC (aws-actions/configure-aws-credentials), so
 # the provider needs no assume_role. For a local run from the management account's admin session, pass
-#   -var assume_role_arn=arn:aws:iam::REDACTED-ACCOUNT-ID:role/OrganizationAccountAccessRole
+#   -var assume_role_arn=arn:aws:iam::<account-id>:role/OrganizationAccountAccessRole
 # and the provider assumes it.
 #
 # The bucket comes in at init time, from the TF_STATE_BUCKET repo variable in CI:

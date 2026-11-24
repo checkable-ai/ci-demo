@@ -1,6 +1,6 @@
 # Flow 3: CI/CD into AWS
 
-`infra/service/` is the Terraform for the summariser service of Risky Business Solutions (a fictional sample company): one AWS Lambda function with a public function URL, in member account REDACTED-ACCOUNT-ID, region `ap-southeast-2`. Two workflows run it.
+`infra/service/` is the Terraform for the summariser service of Risky Business Solutions (a fictional sample company): one AWS Lambda function with a public function URL, in a dedicated AWS member account, region `ap-southeast-2`. Two workflows run it.
 
 | Workflow | Job (check name) | When | AWS role |
 | --- | --- | --- | --- |
@@ -17,7 +17,7 @@ Both roles are assumed through GitHub OIDC, so the repo holds no AWS key. They a
 - `aws_cloudwatch_log_group.summariser` (`/aws/lambda/checkable-ci-demo-summariser`), 3 day retention, made before the function so Lambda never makes it with no retention. JSON logs with system logs at `WARN`, so the START, END and REPORT lines are not stored.
 - `aws_iam_role.exec` (`checkable-ci-demo-summariser-exec`): an inline policy for `logs:CreateLogStream` and `logs:PutLogEvents` on that log group only, and the permissions boundary `checkable-ci-demo-summariser-boundary`, which allows the same and nothing more.
 
-Every resource carries `Project = checkable-ci-demo` through the provider's default tags. The provider refuses any account other than REDACTED-ACCOUNT-ID. Output: `function_url`.
+Every resource carries `Project = checkable-ci-demo` through the provider's default tags. The provider refuses any account other than the one in `TF_VAR_account_id` (set from the `AWS_ACCOUNT_ID` repo variable in CI). Output: `function_url`.
 
 State: S3 backend, key `checkable-ai/ci-demo/service.tfstate`, `use_lockfile = true` (Terraform 1.10 or later, no DynamoDB table). The bucket is not in the code: CI passes it with `-backend-config="bucket=$TF_STATE_BUCKET"` from the repo variable. It is a small private bucket in the same AWS account (versioned, encrypted, public access blocked). The plan role may read this one key and write its lock file, and the deploy role may read and write both.
 
@@ -64,7 +64,7 @@ These steps are applied for `checkable-ai/ci-demo`. They are the order for your 
 A local run from the management account's admin session assumes `OrganizationAccountAccessRole` in the member account:
 
     terraform -chdir=infra/service init -backend-config="bucket=<state bucket>"
-    AWS_PROFILE=checkable-admin terraform -chdir=infra/service plan -var assume_role_arn=arn:aws:iam::REDACTED-ACCOUNT-ID:role/OrganizationAccountAccessRole
+    AWS_PROFILE=checkable-admin terraform -chdir=infra/service plan -var account_id=<account-id> -var assume_role_arn=arn:aws:iam::<account-id>:role/OrganizationAccountAccessRole
 
 ## Cost at demo traffic
 

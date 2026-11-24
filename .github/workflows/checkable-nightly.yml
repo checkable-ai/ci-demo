@@ -94,9 +94,8 @@ jobs:
     env:
       ALERT_TO: ${{ vars.ALERT_TO || 'hello+feed-test@checkableai.com' }}
       ALERT_FROM: ${{ vars.ALERT_FROM || 'feed@checkableai.com' }}
-      # The secret wins. In checkable-ai/ci-demo itself the demo role is the default, so email works with no
-      # setup there. A copy of this repository sends nothing until it sets its own AWS_ROLE_ARN.
-      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN || (github.repository == 'checkable-ai/ci-demo' && 'arn:aws:iam::REDACTED-ACCOUNT-ID:role/checkable-ci-demo-ses' || '') }}
+      # From the AWS_ROLE_ARN secret. A copy of this repository sends nothing until it sets its own.
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

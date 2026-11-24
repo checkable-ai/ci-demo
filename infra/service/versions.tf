@@ -6,7 +6,7 @@
 #   -var assume_role_arn=arn:aws:iam::<account-id>:role/OrganizationAccountAccessRole
 # and the provider assumes it.
 #
-# The bucket comes in at init time, from the TF_STATE_BUCKET repo variable in CI:
+# The bucket comes in at init time, from the TF_STATE_BUCKET secret in CI:
 #   terraform init -backend-config="bucket=<state bucket>"
 
 terraform {

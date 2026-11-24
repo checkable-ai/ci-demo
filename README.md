@@ -167,7 +167,7 @@ GitHub OIDC, so the repository holds no cloud keys.
    `ALLOWED_TO` and `ALLOWED_FROM` at the top of `scripts/checkable/alert.py`, which checks them again before
    sending. Without a role, the emails go to the job summary.
 9. For the deploy flow, follow `infra/README.md`: plan and deploy roles through OIDC, a state bucket, and the
-   variables `TF_PLAN_ROLE_ARN`, `TF_DEPLOY_ROLE_ARN` and `TF_STATE_BUCKET`. Create the `production` environment,
+   secrets `AWS_ACCOUNT_ID`, `TF_PLAN_ROLE_ARN`, `TF_DEPLOY_ROLE_ARN` and `TF_STATE_BUCKET` (secrets, so the account ID is masked in the public logs). Create the `production` environment,
    limit it to `main` and add your reviewers.
 10. Add a ruleset on `main` that requires a pull request and the four checks.
 
@@ -186,7 +186,7 @@ https://checkableai.com/enquire/
 | `FEED_URL` | The feed address. Unset, the Actions read the snapshot in this repository |
 | `ALERT_TO`, `ALERT_FROM` | Where the alert goes and who sends it |
 | `AWS_ROLE_ARN` (secret), `AWS_REGION` | The role the alert job assumes through OIDC, and its region. A copy of this repository sends nothing until it sets its own |
-| `TF_PLAN_ROLE_ARN`, `TF_DEPLOY_ROLE_ARN`, `TF_STATE_BUCKET` | The roles and state bucket for the deploy flow |
+| `AWS_ACCOUNT_ID`, `TF_PLAN_ROLE_ARN`, `TF_DEPLOY_ROLE_ARN`, `TF_STATE_BUCKET` (secrets) | The account, roles and state bucket for the deploy flow. Secrets, so the account ID is masked in the public logs |
 
 Each alert subject ends with its pull request number, for example "(PR #4)", so mail clients keep each one in its
 own thread. GitHub pauses scheduled workflows after 60 days without a commit, so refresh

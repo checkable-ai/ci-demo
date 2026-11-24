@@ -4,7 +4,7 @@ variable "region" {
 }
 
 variable "account_id" {
-  description = "The member account the service runs in. The provider refuses any other account. CI sets it as TF_VAR_account_id from the AWS_ACCOUNT_ID repo variable."
+  description = "The member account the service runs in. The provider refuses any other account. CI sets it as TF_VAR_account_id from the AWS_ACCOUNT_ID secret."
   type        = string
 }
 

@@ -17,9 +17,9 @@ Both roles are assumed through GitHub OIDC, so the repo holds no AWS key. They a
 - `aws_cloudwatch_log_group.summariser` (`/aws/lambda/checkable-ci-demo-summariser`), 3 day retention, made before the function so Lambda never makes it with no retention. JSON logs with system logs at `WARN`, so the START, END and REPORT lines are not stored.
 - `aws_iam_role.exec` (`checkable-ci-demo-summariser-exec`): an inline policy for `logs:CreateLogStream` and `logs:PutLogEvents` on that log group only, and the permissions boundary `checkable-ci-demo-summariser-boundary`, which allows the same and nothing more.
 
-Every resource carries `Project = checkable-ci-demo` through the provider's default tags. The provider refuses any account other than the one in `TF_VAR_account_id` (set from the `AWS_ACCOUNT_ID` repo variable in CI). Output: `function_url`.
+Every resource carries `Project = checkable-ci-demo` through the provider's default tags. The provider refuses any account other than the one in `TF_VAR_account_id` (set from the `AWS_ACCOUNT_ID` secret in CI). Output: `function_url`.
 
-State: S3 backend, key `checkable-ai/ci-demo/service.tfstate`, `use_lockfile = true` (Terraform 1.10 or later, no DynamoDB table). The bucket is not in the code: CI passes it with `-backend-config="bucket=$TF_STATE_BUCKET"` from the repo variable. It is a small private bucket in the same AWS account (versioned, encrypted, public access blocked). The plan role may read this one key and write its lock file, and the deploy role may read and write both.
+State: S3 backend, key `checkable-ai/ci-demo/service.tfstate`, `use_lockfile = true` (Terraform 1.10 or later, no DynamoDB table). The bucket is not in the code: CI passes it with `-backend-config="bucket=$TF_STATE_BUCKET"` from the repo secret. It is a small private bucket in the same AWS account (versioned, encrypted, public access blocked). The plan role may read this one key and write its lock file, and the deploy role may read and write both.
 
 ## `terraform/plan`
 
@@ -56,7 +56,7 @@ These steps are applied for `checkable-ai/ci-demo`. They are the order for your 
 1. Create `checkable-ai/ci-demo` and read its id: `gh api repos/checkable-ai/ci-demo --jq .id`.
 2. Apply the roles stack (site repo, `infra/aws/github-oidc-ses`) with `-var github_repo_id=<id>`. It makes the plan and deploy roles and the permissions boundary.
 3. Apply the state bucket policy (site repo, `infra/aws/bootstrap`). It names the two roles, so it goes after step 2.
-4. In this repo, set the variables `TF_STATE_BUCKET` (bootstrap output `state_bucket`), `TF_PLAN_ROLE_ARN` and `TF_DEPLOY_ROLE_ARN` (roles stack outputs).
+4. In this repo, set the secrets `AWS_ACCOUNT_ID`, `TF_STATE_BUCKET` (bootstrap output `state_bucket`), `TF_PLAN_ROLE_ARN` and `TF_DEPLOY_ROLE_ARN` (roles stack outputs).
 5. Create the `production` environment and limit its deployment branches to `main`. In `checkable-ai/ci-demo` it requires a reviewer from `@checkable-ai/reviewers`, a second hold after the Checkable sign-off that the deploy gate checks.
 6. Add `terraform/plan` to the ruleset's required checks.
 7. Merge a signed-off pull request that touches `service/` or `infra/service/`, or run Deploy from the Actions tab on `main`.
